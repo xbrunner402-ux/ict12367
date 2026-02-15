@@ -1,0 +1,55 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* จัดแกลเลอรีเป็นแนวนอน แถวละ 4 รูป */
+.gallery {
+    display: grid;
+    /* กำหนดให้มี 4 คอลัมน์ ขนาดเท่ากัน (1fr) */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 10px; /* ระยะห่างระหว่างรูป */
+    padding: 10px;
+}
+
+.img-container {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* กำหนดให้กรอบรูปเป็นแนวนอน (16:9) */
+    overflow: hidden;
+}
+
+.img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* ให้รูปแสดงเต็มกรอบโดยไม่เบี้ยว */
+    cursor: pointer;
+}
+
+/* ส่วน Modal แสดงรูปกลางจอ */
+.modal {
+    background: rgba(0, 0, 0, 0.85);
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+}
+
+.modal.open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.full-image {
+    position: absolute;
+    /* ปรับขนาดรูปขยายให้เหมาะสม */
+    max-width: 90%;
+    max-height: 80%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 3px solid white;
+}
