@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกข้อมูลพนักงาน</title>
+    <style>
+        /* CSS เขียนไว้ที่นี่เลย */
+        body {
+            background-color: #f2ede9; 
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center; 
+            align-items: center;     
+            min-height: 100vh;       
+            margin: 0;
+        }
+
+        .card {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 15px; 
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); 
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 35px;
+            font-size: 26px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            box-sizing: border-box; /* ป้องกันขนาดเพี้ยน */
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #28a745; 
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>บันทึกข้อมูลพนักงาน</h2>
+        <form>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email">
+            </div>
+            <div class="form-group">
+                <label>Position</label>
+                <select>
+                    <option>Manager</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel">
+            </div>
+            <button type="submit" class="btn-submit">Submit</button>
+        </form>
+    </div>
+
+</body>
+</html>

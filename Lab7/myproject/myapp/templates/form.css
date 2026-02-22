@@ -1,0 +1,96 @@
+/* รีเซ็ตค่าเริ่มต้นของ Browser */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ส่วนสำคัญ: จัดให้อยู่กึ่งกลางหน้าจอและใส่สีพื้นหลัง */
+body {
+    /* สีพื้นหลังโทนเทาอมชมพูอ่อนๆ ตามรูป */
+    background-color: #f2ede9; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* เทคนิคการจัดกึ่งกลางทั้งแนวตั้งและแนวนอน */
+    display: flex;
+    justify-content: center; /* จัดกึ่งกลางแนวนอน */
+    align-items: center;     /* จัดกึ่งกลางแนวตั้ง */
+    min-height: 100vh;       /* ความสูงเต็มหน้าจอ */
+    padding: 20px;           /* เว้นขอบเล็กน้อยเมื่อดูในมือถือ */
+}
+
+/* การ์ดสีขาวตรงกลาง */
+.card {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 15px; /* มุมโค้ง */
+    /* เงาฟุ้งๆ รอบการ์ด */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); 
+    width: 100%;
+    max-width: 450px; /* ความกว้างสูงสุดของการ์ด */
+}
+
+/* หัวข้อ "บันทึกข้อมูลพนักงาน" */
+h2 {
+    text-align: center;
+    color: #333333;
+    margin-bottom: 35px;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+/* ระยะห่างระหว่างแต่ละช่องกรอกข้อมูล */
+.form-group {
+    margin-bottom: 25px;
+}
+
+/* ป้ายกำกับ (Label) ตัวหนาสีดำ */
+label {
+    display: block;
+    font-weight: 700; /* ตัวหนา */
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #000000;
+}
+
+/* ช่องกรอกข้อมูล (Input) และ ตัวเลือก (Select) */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #dcdcdc; /* ขอบสีเทาอ่อน */
+    border-radius: 8px; /* มุมโค้งของช่อง input */
+    font-size: 15px;
+    color: #333;
+    background-color: #fff;
+    outline: none; /* เอาเส้นขอบสีฟ้าเวลาคลิกออก */
+    transition: border-color 0.3s;
+}
+
+/* เปลี่ยนสีขอบเมื่อคลิกที่ช่อง */
+input:focus, select:focus {
+    border-color: #28a745;
+}
+
+/* ปุ่ม Submit สีเขียว */
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    /* สีเขียวตามรูป */
+    background-color: #28a745; 
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+/* เอฟเฟกต์เมื่อเอาเมาส์ไปวางบนปุ่ม */
+.btn-submit:hover {
+    background-color: #218838; /* สีเขียวเข้มขึ้น */
+}
