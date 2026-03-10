@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>About Us</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+.product-img{
+width:100%;
+height:220px;
+object-fit:cover;
+border:3px solid #ddd;
+border-radius:10px;
+transition:0.3s;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+.product-img:hover{
+transform:scale(1.08);
+border-color:#198754;
+}
+
+body{
+background-color: #7ae1e3;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23f4f6e0' fill-opacity='0.4'%3E%3Cpath fill-rule='evenodd' d='M11 0l5 20H6l5-20zm42 31a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM0 72h40v4H0v-4zm0-8h31v4H0v-4zm20-16h20v4H20v-4zM0 56h40v4H0v-4zm63-25a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm10 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM53 41a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm10 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm10 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-30 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-28-8a5 5 0 0 0-10 0h10zm10 0a5 5 0 0 1-10 0h10zM56 5a5 5 0 0 0-10 0h10zm10 0a5 5 0 0 1-10 0h10zm-3 46a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm10 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM21 0l5 20H16l5-20zm43 64v-4h-4v4h-4v4h4v4h4v-4h4v-4h-4zM36 13h4v4h-4v-4zm4 4h4v4h-4v-4zm-4 4h4v4h-4v-4zm8-8h4v4h-4v-4z'/%3E%3C/g%3E%3C/svg%3E");
+.product-img:hover{
+transform:scale(1.08);
+border-color:#198754; }
+}
+
+
+footer{
+background:#222;
+color:white;
+text-align:center;
+padding:15px;
+margin-top:40px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<div class="container">
+
+<a class="navbar-brand fw-bold" style="color:#d81b60;">SPU</a>
+
+<div>
+<a class="btn btn-outline-light me-2" href="{% url 'index' %}">หน้าแรก</a>
+<a class="btn btn-outline-light me-2" href="{% url 'form' %}">ลงทะเบียน</a>
+<a class="btn btn-outline-light" href="{% url 'about' %}">เกี่ยวกับเรา</a>
+</div>
+
+</div>
+</nav>
+
+<div class="container mt-5">
+
+<h2 class="text-center mb-4">Western Food & Nature Gallery</h2>
+<p class="text-center mb-4">
+แกลเลอรีที่รวบรวมภาพอาหารตะวันตกและวิวธรรมชาติที่สวยงาม
+เพื่อแสดงความหลากหลายของวัฒนธรรมอาหารและความงดงามของธรรมชาติจากทั่วโลก
+</p>
+
+<div class="row g-4">
+
+<div class="col-md-4">
+<img src="https://images.unsplash.com/photo-1550547660-d9450f859349" class="product-img">
+<h5 class="text-center mt-2">Burger</h5>
+</div>
+
+<div class="col-md-4">
+<img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092" class="product-img">
+<h5 class="text-center mt-2">Pizza</h5>
+</div>
+
+<div class="col-md-4">
+<img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141" class="product-img">
+<h5 class="text-center mt-2">Pasta</h5>
+</div>
+
+<!-- Nature -->
+
+<div class="col-md-4">
+<img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470" class="product-img">
+<h5 class="text-center mt-2">Mountain View</h5>
+</div>
+
+<div class="col-md-4">
+<img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee" class="product-img">
+<h5 class="text-center mt-2">Forest</h5>
+</div>
+
+<div class="col-md-4">
+<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" class="product-img">
+<h5 class="text-center mt-2">Ocean Sunset</h5>
+</div>
+
+</div>
+
+</div>
+
+<footer class="bg-dark text-white text-center p-3 mt-5">
+© 2026 ICT12367 SPU | 68098988 อาร์ดีฟ สุระกำแหง
+</footer>
+
+</body>
+</html>
