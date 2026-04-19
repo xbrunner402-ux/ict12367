@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หน้าโชว์ข้อมูลประชากร</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 style="color: blueviolet;" class="text-center mb-4">ยินดีต้อนรับเข้าสู่ประชากร</h2>
+        
+        <div class="row mb-3 justify-content-end">
+            <div class="col-md-5">
+                <form action="" method="GET" class="d-flex">
+                    <input class="form-control me-2" type="search" name="q" placeholder="ค้นหาชื่อ หรืออายุ..." aria-label="Search" value="{{ request.GET.q }}">
+                    <button class="btn btn-outline-primary me-2" type="submit">ค้นหา</button>
+                    <a href="/" class="btn btn-outline-danger">ล้างค่า</a>
+                </form>
+            </div>
+        </div>
+
+        <table class="table table-hover mt-3">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">รหัสประชากร</th>
+                    <th scope="col">ชื่อประชากร</th>
+                    <th scope="col">อายุ</th>
+                    <th scope="col">วันที่เพิ่มข้อมูล</th>
+                    <th scope="col">แก้ไข</th>
+                    <th scope="col">ลบ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person in all_person %}
+                <tr>
+                    <th scope="row">{{person.id}}</th>
+                    <td>{{person.name}}</td>
+                    <td>{{person.age}}</td>
+                    <td>{{person.date}}</td>
+                    <td><a href="/edit/{{ person.id }}/" class="btn btn-warning">แก้ไข</a></td>
+                    <td><a href="/delete/{{ person.id }}/" class="btn btn-danger">ลบ</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">ไม่พบข้อมูลที่คุณค้นหา</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
