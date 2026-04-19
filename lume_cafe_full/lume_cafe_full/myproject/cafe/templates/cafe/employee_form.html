@@ -1,0 +1,14 @@
+{% extends 'cafe/base.html' %}
+{% block title %}เพิ่มพนักงาน{% endblock %}{% block n_emp %}active{% endblock %}{% block page_title %}เพิ่มพนักงาน{% endblock %}
+{% block content %}
+<div class="fs" style="max-width:600px"><div class="fs-hdr"><div class="fs-icon">👨‍💼</div><span class="fs-title">ข้อมูลพนักงาน</span></div>
+<div class="fs-body"><form method="POST">{% csrf_token %}
+  <div class="row g-3 mb-3"><div class="col-md-7"><label class="lbl">ชื่อ-นามสกุล *</label><input type="text" name="name" class="inp" required/></div>
+    <div class="col-md-5"><label class="lbl">ตำแหน่ง *</label><select name="role" class="inp"><option value="barista">Barista</option><option value="cashier">Cashier</option><option value="baker">Baker</option><option value="manager">Manager</option><option value="delivery">Delivery</option></select></div></div>
+  <div class="row g-3 mb-3"><div class="col-md-6"><label class="lbl">เบอร์โทร</label><input type="text" name="phone" class="inp"/></div><div class="col-md-6"><label class="lbl">อีเมล</label><input type="email" name="email" class="inp"/></div></div>
+  <div class="row g-3 mb-4"><div class="col-md-4"><label class="lbl">เงินเดือน ฿</label><input type="number" name="salary" class="inp" value="0"/></div>
+    <div class="col-md-4"><label class="lbl">วันเริ่มงาน *</label><input type="date" name="start_date" class="inp" required/></div>
+    <div class="col-md-4"><label class="lbl">สถานะ</label><select name="status" class="inp"><option value="active">ทำงานอยู่</option><option value="leave">ลางาน</option><option value="inactive">ลาออก</option></select></div></div>
+  <div style="display:flex;gap:10px"><button type="submit" class="btn-p">บันทึก</button><a href="{% url 'employee_list' %}" class="btn-s" style="text-decoration:none">ยกเลิก</a></div>
+</form></div></div>
+{% endblock %}

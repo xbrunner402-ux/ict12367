@@ -1,0 +1,26 @@
+{% extends 'cafe/base.html' %}
+{% block title %}ซัพพลายเออร์{% endblock %}{% block n_supp %}active{% endblock %}{% block page_title %}ซัพพลายเออร์{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <input type="text" id="liveSearch" class="inp" placeholder="🔍 ค้นหา..." style="width:260px" oninput="liveFilter(this.value)"/>
+  <a href="{% url 'supplier_new' %}" class="btn-p" style="text-decoration:none">+ เพิ่มซัพพลายเออร์</a>
+</div>
+<div class="card-box"><div style="overflow-x:auto"><table class="tbl">
+  <thead><tr><th>รหัส</th><th>ชื่อ</th><th>เบอร์โทร</th><th>อีเมล</th><th>ที่อยู่</th><th>จัดการ</th></tr></thead>
+  <tbody>{% for s in suppliers %}<tr class="data-row">
+    <td style="font-size:12px;color:#8a7060">{{ s.code }}</td>
+    <td style="font-weight:500">{{ s.name }}</td>
+    <td style="color:#8a7060">{{ s.phone|default:'—' }}</td>
+    <td style="font-size:12px;color:#8a7060">{{ s.email|default:'—' }}</td>
+    <td style="font-size:12px;color:#8a7060">{{ s.address|default:'—'|truncatechars:30 }}</td>
+    <td style="white-space:nowrap">
+      <a href="{% url 'supplier_edit' s.pk %}" class="btn-s btn-sm" style="text-decoration:none;margin-right:4px">✏️ แก้ไข</a>
+      <button onclick="openDeleteModal('{% url 'supplier_delete' s.pk %}','ลบซัพพลายเออร์','ลบ &quot;{{ s.name }}&quot;?')"
+        style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;border-radius:4px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit;">🗑 ลบ</button>
+    </td>
+  </tr>{% empty %}<tr><td colspan="6" style="text-align:center;padding:28px;color:#94a3b8">ไม่มีซัพพลายเออร์</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}
+{% block extra_js %}<script>
+function liveFilter(q){q=q.toLowerCase();document.querySelectorAll('.data-row').forEach(function(r){var t=r.textContent.toLowerCase();r.style.display=t.includes(q)?'':'none';});}
+</script>{% endblock %}

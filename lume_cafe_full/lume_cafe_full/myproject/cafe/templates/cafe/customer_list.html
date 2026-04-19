@@ -1,0 +1,27 @@
+{% extends 'cafe/base.html' %}
+{% block title %}ลูกค้า{% endblock %}{% block n_cust %}active{% endblock %}{% block page_title %}ลูกค้า{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <input type="text" id="liveSearch" class="inp" placeholder="🔍 ค้นหาชื่อ, เบอร์โทร..." style="width:260px" oninput="liveFilter(this.value)"/>
+  <a href="{% url 'customer_new' %}" class="btn-p" style="text-decoration:none">+ เพิ่มลูกค้า</a>
+</div>
+<div class="card-box"><div style="overflow-x:auto"><table class="tbl" id="mainTable">
+  <thead><tr><th>รหัส</th><th>ชื่อ</th><th>เบอร์โทร</th><th>อีเมล</th><th>แต้มสะสม</th><th>วันที่สมัคร</th><th>จัดการ</th></tr></thead>
+  <tbody>{% for c in customers %}<tr class="data-row">
+    <td style="font-size:12px;color:#8a7060">{{ c.code }}</td>
+    <td style="font-weight:500">{{ c.name }}</td>
+    <td style="color:#8a7060">{{ c.phone|default:'—' }}</td>
+    <td style="font-size:12px;color:#8a7060">{{ c.email|default:'—' }}</td>
+    <td><span style="color:#c8873a;font-weight:600">⭐ {{ c.points }}</span></td>
+    <td style="font-size:12px;color:#8a7060">{{ c.created_at|date:"d/m/Y" }}</td>
+    <td style="white-space:nowrap">
+      <a href="{% url 'customer_edit' c.pk %}" class="btn-s btn-sm" style="text-decoration:none;margin-right:4px">✏️ แก้ไข</a>
+      <button onclick="openDeleteModal('{% url 'customer_delete' c.pk %}','ลบลูกค้า','ลบ &quot;{{ c.name }}&quot;?')"
+        style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;border-radius:4px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit;">🗑 ลบ</button>
+    </td>
+  </tr>{% empty %}<tr><td colspan="7" style="text-align:center;padding:28px;color:#94a3b8">ไม่มีลูกค้า</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}
+{% block extra_js %}<script>
+function liveFilter(q){q=q.toLowerCase();document.querySelectorAll('.data-row').forEach(function(r){var t=r.textContent.toLowerCase();r.style.display=t.includes(q)?'':'none';});}
+</script>{% endblock %}

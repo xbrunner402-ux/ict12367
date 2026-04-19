@@ -1,0 +1,102 @@
+{% extends 'cafe/base.html' %}
+{% block title %}ภาพรวม — Lumè Café{% endblock %}
+{% block n_dash %}active{% endblock %}
+{% block page_title %}ภาพรวม{% endblock %}
+{% block extra_css %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+  <div class="col-md-3"><div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="stat-val counter" data-target="{{ rev_today|floatformat:0 }}" style="color:#c8873a">฿0</div><div class="stat-lbl">ยอดขายวันนี้ · {{ orders_today }} ออเดอร์</div></div><div style="font-size:2rem">📅</div></div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="stat-val counter" data-target="{{ rev_month|floatformat:0 }}" style="color:#3a7d5a">฿0</div><div class="stat-lbl">ยอดขายเดือนนี้</div></div><div style="font-size:2rem">📆</div></div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="stat-val counter" data-target="{{ rev_year|floatformat:0 }}" style="color:#5546a8">฿0</div><div class="stat-lbl">ยอดขายทั้งปี</div></div><div style="font-size:2rem">🗓️</div></div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="stat-val counter" data-target="{{ pending_so }}" style="color:#a06820">0</div><div class="stat-lbl">ออเดอร์รอดำเนินการ</div></div><div style="font-size:2rem">⏳</div></div></div></div>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-md-4"><div class="stat-card text-center"><div class="stat-val counter" data-target="{{ total_customers }}">0</div><div class="stat-lbl">ลูกค้าทั้งหมด</div></div></div>
+  <div class="col-md-4"><div class="stat-card text-center"><div class="stat-val counter" data-target="{{ total_products }}">0</div><div class="stat-lbl">สินค้าพร้อมขาย</div></div></div>
+  <div class="col-md-4"><div class="stat-card text-center"><div class="stat-val counter" data-target="{{ low_ingredients|length }}" style="color:#b83030">0</div><div class="stat-lbl">วัตถุดิบสต็อกต่ำ</div></div></div>
+</div>
+{% if low_ingredients %}
+<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;">
+  <span style="font-weight:600;color:#d97706">⚠️ วัตถุดิบสต็อกต่ำ: </span>
+  {% for i in low_ingredients %}<span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:10px;margin:2px;display:inline-block;">{{ i.name }} ({{ i.stock_qty }} {{ i.unit }})</span>{% endfor %}
+</div>
+{% endif %}
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="card-box">
+      <div class="card-box-hdr"><span class="card-box-title">📉 ยอดขาย 7 วันล่าสุด</span></div>
+      <div style="padding:14px"><canvas id="chart" height="120"></canvas></div>
+    </div>
+  </div>
+  <div class="col-lg-3">
+    <div class="card-box">
+      <div class="card-box-hdr"><span class="card-box-title">🥧 สัดส่วนหมวดสินค้า</span></div>
+      <div style="padding:14px;display:flex;align-items:center;justify-content:center;"><canvas id="donut" width="180" height="180"></canvas></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card-box">
+      <div class="card-box-hdr"><span class="card-box-title">🏆 สินค้าขายดีเดือนนี้</span></div>
+      {% for p in top_products %}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid rgba(232,217,197,.5);font-size:13px;">
+        <div><div style="font-weight:500">{{ p.product__name }}</div><div style="font-size:11px;color:#8a7060">{{ p.qty|floatformat:0 }} รายการ</div></div>
+        <div style="font-weight:700;color:#3a7d5a">฿{{ p.revenue|floatformat:0 }}</div>
+      </div>
+      {% empty %}<div style="padding:24px;text-align:center;color:#94a3b8;font-size:13px">ยังไม่มีข้อมูล</div>{% endfor %}
+    </div>
+  </div>
+</div>
+<div class="card-box mt-3">
+  <div class="card-box-hdr"><span class="card-box-title">🧾 รายการขายล่าสุด</span><a href="{% url 'sale_list' %}" class="btn-s btn-sm" style="text-decoration:none">ดูทั้งหมด →</a></div>
+  <div style="overflow-x:auto"><table class="tbl">
+    <thead><tr><th>เลขที่</th><th>วันที่</th><th>ลูกค้า</th><th>ประเภท</th><th>ยอดรวม</th><th>สถานะ</th></tr></thead>
+    <tbody>{% for o in recent_sales %}<tr>
+      <td><a href="{% url 'sale_detail' o.pk %}" style="color:#c8873a;text-decoration:none;font-weight:500">{{ o.so_number }}</a></td>
+      <td style="color:#8a7060">{{ o.date|date:"d/m/Y" }}</td>
+      <td>{{ o.customer.name|default:'Walk-in' }}</td>
+      <td><span class="badge badge-gray">{{ o.get_order_type_display }}</span></td>
+      <td style="font-weight:700;color:#3a7d5a">฿{{ o.total|floatformat:2 }}</td>
+      <td>{% if o.status == 'completed' %}<span class="badge badge-green">เสร็จสิ้น</span>
+        {% elif o.status == 'confirmed' %}<span class="badge badge-blue">ยืนยัน</span>
+        {% elif o.status == 'draft' %}<span class="badge badge-gray">แบบร่าง</span>
+        {% else %}<span class="badge badge-red">ยกเลิก</span>{% endif %}
+      </td>
+    </tr>{% empty %}<tr><td colspan="6" style="text-align:center;padding:24px;color:#94a3b8">ยังไม่มีรายการ</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+// Animated counters
+document.querySelectorAll('.counter').forEach(function(el){
+  var target=parseInt(el.getAttribute('data-target'))||0;
+  var prefix=el.textContent.startsWith('฿')?'฿':'';
+  var start=0,duration=1000,step=target/60;
+  var timer=setInterval(function(){
+    start+=step;
+    if(start>=target){start=target;clearInterval(timer);}
+    el.textContent=prefix+Math.floor(start).toLocaleString();
+  },duration/60);
+});
+// Line chart
+new Chart(document.getElementById('chart').getContext('2d'),{
+  type:'line',
+  data:{labels:{{ chart_labels|safe }},datasets:[{label:'ยอดขาย',data:{{ chart_data|safe }},borderColor:'#c8873a',backgroundColor:'rgba(200,135,58,.08)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#c8873a'}]},
+  options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{color:'#8a7060',font:{size:11}},grid:{color:'rgba(200,135,58,.08)'}},x:{ticks:{color:'#8a7060',font:{size:11}},grid:{display:false}}}}
+});
+// Donut chart
+var catLabels={{ cat_labels|safe }};
+var catValues={{ cat_values|safe }};
+var catColors=['#c8873a','#3a7d5a','#5546a8','#b07340','#b83030'];
+var catThai={coffee:'Coffee',tea:'Tea',smoothie:'Smoothie',bakery:'Bakery'};
+if(catLabels.length){
+  new Chart(document.getElementById('donut').getContext('2d'),{
+    type:'doughnut',
+    data:{labels:catLabels.map(function(l){return catThai[l]||l;}),datasets:[{data:catValues,backgroundColor:catColors,borderWidth:2,borderColor:'rgba(255,255,255,.3)'}]},
+    options:{responsive:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:{size:11},color:'#8a7060',padding:8}}}}
+  });
+}else{
+  document.getElementById('donut').parentElement.innerHTML='<div style="text-align:center;color:#8a7060;font-size:13px;padding:40px 0">ยังไม่มีข้อมูล</div>';
+}
+</script>
+{% endblock %}

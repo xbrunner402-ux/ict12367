@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>POS — Lumè Café</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:      #f2ede8;
+      --surface: #faf8f5;
+      --card:    #ffffff;
+      --border:  #e0d8cf;
+      --border2: #ccc3b8;
+      --brown:   #8b6347;
+      --brown-d: #6b4a32;
+      --brown-l: #c4a882;
+      --brown-xl:#f0e8de;
+      --text:    #2c201a;
+      --muted:   #9a8070;
+      --green:   #4a7c59;
+      --red:     #9e3a3a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Sarabun', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+
+    /* TOPBAR */
+    .pos-top { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 18px; height: 50px; display: flex; align-items: center; justify-content: space-between; }
+    .pos-top h1 { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--brown-d); letter-spacing: 1px; }
+    .pos-top-right { display: flex; align-items: center; gap: 12px; }
+    .pos-time { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: .5px; }
+    .btn-back { background: var(--brown-xl); color: var(--brown); border: 1px solid var(--border); padding: 5px 13px; border-radius: 5px; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block; font-weight: 500; transition: all .15s; }
+    .btn-back:hover { background: var(--brown-l); color: #fff; border-color: var(--brown-l); }
+
+    /* LAYOUT */
+    .pos-layout { display: grid; grid-template-columns: 1fr 340px; height: calc(100vh - 50px); }
+
+    /* LEFT */
+    .pos-left { display: flex; flex-direction: column; border-right: 1px solid var(--border); background: var(--bg); }
+
+    /* CATEGORY TABS */
+    .cat-bar { display: flex; gap: 6px; padding: 10px 14px; background: var(--card); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .cat-btn { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border2); background: transparent; color: var(--muted); font-family: 'Sarabun', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; }
+    .cat-btn:hover { border-color: var(--brown); color: var(--brown); }
+    .cat-btn.active { background: var(--brown); border-color: var(--brown); color: #fff; font-weight: 600; }
+
+    /* SEARCH */
+    .search-bar { padding: 8px 14px; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .search-inp { width: 100%; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 7px 12px; color: var(--text); font-family: 'Sarabun', sans-serif; font-size: 13px; outline: none; transition: border-color .15s; }
+    .search-inp::placeholder { color: var(--muted); }
+    .search-inp:focus { border-color: var(--brown); }
+
+    /* PRODUCT GRID */
+    .prod-grid { flex: 1; overflow-y: auto; padding: 12px 14px; display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; align-content: start; }
+    .prod-grid::-webkit-scrollbar { width: 4px; }
+    .prod-grid::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+    .prod-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; cursor: pointer; transition: all .2s; text-align: center; }
+    .prod-card:hover { border-color: var(--brown-l); box-shadow: 0 2px 10px rgba(139,99,71,.1); transform: translateY(-1px); }
+    .prod-card.out { opacity: .45; cursor: not-allowed; }
+    .prod-card.out:hover { transform: none; box-shadow: none; border-color: var(--border); }
+    .prod-img { width: 68px; height: 68px; border-radius: 8px; object-fit: cover; margin: 0 auto 8px; display: block; background: var(--brown-xl); }
+    .prod-cat { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .prod-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+    .prod-price { font-size: 14px; font-weight: 700; color: var(--brown); }
+    .prod-stock { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+    /* RIGHT — ORDER */
+    .pos-right { display: flex; flex-direction: column; background: var(--card); }
+    .order-top { padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .order-so { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+    .order-so span { color: var(--brown-d); font-weight: 700; }
+    .sel-inp { background: var(--card); border: 1px solid var(--border); border-radius: 5px; padding: 6px 9px; color: var(--text); font-family: 'Sarabun', sans-serif; font-size: 12px; outline: none; width: 100%; transition: border-color .15s; }
+    .sel-inp:focus { border-color: var(--brown); }
+    .sel-inp option { background: #fff; }
+
+    /* ORDER ITEMS */
+    .order-items { flex: 1; overflow-y: auto; }
+    .order-items::-webkit-scrollbar { width: 3px; }
+    .order-items::-webkit-scrollbar-thumb { background: var(--border); }
+    .order-item { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-bottom: 1px solid var(--border); }
+    .order-item:last-child { border-bottom: none; }
+    .oi-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
+    .oi-price { font-size: 11px; color: var(--muted); }
+    .qty-ctrl { display: flex; align-items: center; gap: 4px; }
+    .qty-btn { width: 24px; height: 24px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface); color: var(--brown); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; line-height: 1; }
+    .qty-btn:hover { background: var(--brown); color: #fff; border-color: var(--brown); }
+    .qty-num { min-width: 28px; text-align: center; font-size: 13px; font-weight: 600; color: var(--text); }
+    .oi-total { font-size: 13px; font-weight: 700; color: var(--brown-d); min-width: 52px; text-align: right; }
+    .oi-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 2px 4px; line-height: 1; transition: color .15s; }
+    .oi-del:hover { color: var(--red); }
+    .order-empty { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--muted); padding: 40px; }
+    .order-empty-icon { font-size: 2.2rem; opacity: .4; }
+
+    /* SUMMARY */
+    .order-summary { padding: 12px 14px; border-top: 1px solid var(--border); background: var(--surface); }
+    .sum-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; color: var(--muted); }
+    .sum-total { display: flex; justify-content: space-between; font-size: 20px; font-weight: 700; padding-top: 8px; border-top: 1px solid var(--border); margin-bottom: 12px; color: var(--text); }
+    .sum-total span:last-child { color: var(--brown-d); }
+    .disc-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .disc-inp { background: var(--card); border: 1px solid var(--border); border-radius: 5px; padding: 5px 8px; color: var(--text); font-size: 13px; outline: none; width: 100px; text-align: right; font-family: 'Sarabun', sans-serif; }
+    .disc-inp:focus { border-color: var(--brown); }
+
+    /* PAYMENT BUTTONS */
+    .pay-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .pay-btn { padding: 11px; border: 1px solid var(--border2); border-radius: 8px; background: var(--card); color: var(--muted); font-family: 'Sarabun', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all .2s; }
+    .pay-btn:hover { border-color: var(--brown-l); color: var(--brown); }
+    .pay-btn.active { border-color: var(--brown); color: var(--brown); background: var(--brown-xl); font-weight: 600; }
+
+    .btn-confirm { width: 100%; padding: 13px; background: var(--brown); color: #fff; border: none; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .2s; letter-spacing: .3px; }
+    .btn-confirm:hover { background: var(--brown-d); }
+    .btn-confirm:disabled { background: var(--border2); color: var(--muted); cursor: not-allowed; }
+    .btn-clear { width: 100%; padding: 8px; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; cursor: pointer; margin-top: 6px; font-family: 'Sarabun', sans-serif; transition: all .15s; }
+    .btn-clear:hover { border-color: var(--red); color: var(--red); }
+
+    /* RECEIPT MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(44,32,26,.55); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+    .modal-overlay.show { display: flex; }
+        /* RECEIPT */
+    .receipt-overlay-inner { background:#fff; color:#2c201a; border-radius:16px; width:340px; overflow:hidden; box-shadow:0 24px 60px rgba(44,32,26,.25); border:1px solid #e0d8cf; }
+    .receipt-header { background:linear-gradient(160deg,#2a1a0e,#3d2314); padding:24px 24px 20px; text-align:center; }
+    .receipt-logo-icon { font-size:2rem; display:block; margin-bottom:6px; }
+    .receipt-header h2 { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:800; color:#f5c878; letter-spacing:2px; margin-bottom:4px; }
+    .receipt-header .receipt-tagline { font-size:10px; color:#7a5c40; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
+    .receipt-header .so { font-size:11px; color:rgba(200,135,58,.7); }
+    .receipt-divider { display:flex; align-items:center; gap:0; padding:0 20px; }
+    .receipt-divider-line { flex:1; border-top:1px dashed #e0d8cf; }
+    .receipt-divider-dot { width:12px; height:12px; background:#f2ede8; border:1px solid #e0d8cf; border-radius:50%; margin:-6px -6px; flex-shrink:0; }
+    .receipt-body { padding:16px 20px; }
+    .receipt-so-row { display:flex; justify-content:space-between; font-size:11px; color:#8a7060; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid #f0e8da; }
+    .receipt-items { margin-bottom:10px; }
+    .receipt-item { display:flex; justify-content:space-between; align-items:center; font-size:13px; padding:6px 0; border-bottom:1px solid #f8f4ef; }
+    .receipt-item:last-child { border-bottom:none; }
+    .receipt-item-name { font-weight:500; color:#2c201a; }
+    .receipt-item-qty { font-size:11px; color:#8a7060; margin-left:4px; }
+    .receipt-item-price { font-weight:600; color:#2c201a; }
+    .receipt-subtotal-row { display:flex; justify-content:space-between; font-size:12px; color:#8a7060; padding:4px 0; }
+    .receipt-discount-row { display:flex; justify-content:space-between; font-size:12px; color:#b83030; padding:4px 0; }
+    .receipt-total-wrap { background:linear-gradient(135deg,#fdf0de,#fae3c0); border:1px solid #e8c890; border-radius:10px; padding:14px 16px; margin:12px 0; text-align:center; }
+    .receipt-total-lbl { font-size:11px; color:#a06820; font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
+    .receipt-total-val { font-size:1.8rem; font-weight:800; color:#6b4a32; letter-spacing:1px; }
+    .receipt-points-wrap { background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:8px 12px; margin-bottom:12px; text-align:center; font-size:12px; font-weight:600; color:#a06820; display:none; }
+    .receipt-footer { background:#fdf8f2; border-top:1px dashed #e0d8cf; padding:14px 20px; text-align:center; }
+    .receipt-thanks { font-size:12px; color:#8a7060; margin-bottom:12px; line-height:1.6; }
+    .receipt-barcode { display:flex; justify-content:center; gap:1px; margin-bottom:12px; height:28px; align-items:flex-end; }
+    .receipt-barcode span { background:#2c201a; border-radius:1px; }
+    .btn-new-order { width:100%; padding:12px; background:linear-gradient(135deg,#c8873a,#a86830); color:#fff; border:none; border-radius:8px; font-family:'Sarabun',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:all .2s; letter-spacing:.3px; }
+    .btn-new-order:hover { background:linear-gradient(135deg,#d49040,#b87830); transform:translateY(-1px); }
+  
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    html, body { margin: 0 !important; padding: 0 !important; background: white !important; overflow: visible !important; }
+    /* ซ่อนทุกอย่างยกเว้นใบเสร็จ */
+    .pos-top, .pos-left, .pos-right, .pos-layout, .cat-bar, .search-bar, .prod-grid,
+    .order-top, .order-items, .order-summary { display: none !important; }
+    /* แสดง modal ให้เห็น */
+    .modal-overlay {
+      display: block !important;
+      position: static !important;
+      background: none !important;
+      backdrop-filter: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .receipt-overlay-inner {
+      width: 100% !important;
+      max-width: 100% !important;
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+    }
+    .receipt-header { padding: 28px 28px 20px !important; }
+    .receipt-header h2 { font-size: 1.8rem !important; }
+    .receipt-body { padding: 18px 28px !important; }
+    .receipt-footer { padding: 16px 28px !important; }
+    .receipt-total-val { font-size: 2.2rem !important; }
+    .receipt-item { font-size: 14px !important; padding: 7px 0 !important; }
+    /* ซ่อนปุ่ม */
+    .btn-new-order, [style*="grid-template-columns:1fr 1fr"] { display: none !important; }
+  }
+
+  </style>
+</head>
+<body>
+
+<div class="pos-top">
+  <h1>☕ Lumè Café — POS</h1>
+  <div class="pos-top-right">
+    <span class="pos-time" id="clock"></span>
+    <a href="/" class="btn-back">← หลังบ้าน</a>
+  </div>
+</div>
+
+<div class="pos-layout">
+  <div class="pos-left">
+    <div class="cat-bar" id="catBar">
+      <button class="cat-btn active" onclick="filterCat('all', this)">ทั้งหมด</button>
+      <button class="cat-btn" onclick="filterCat('coffee', this)">☕ Coffee</button>
+      <button class="cat-btn" onclick="filterCat('tea', this)">🍵 Tea</button>
+      <button class="cat-btn" onclick="filterCat('smoothie', this)">🥤 Smoothie</button>
+      <button class="cat-btn" onclick="filterCat('bakery', this)">🥐 Bakery</button>
+    </div>
+    <div class="search-bar">
+      <input type="text" class="search-inp" placeholder="🔍 ค้นหาสินค้า..." id="searchInp" oninput="searchProducts(this.value)"/>
+    </div>
+    <div class="prod-grid" id="prodGrid"></div>
+  </div>
+
+  <div class="pos-right">
+    <div class="order-top">
+      <div class="order-so">เลขที่ออเดอร์: <span id="soDisplay">{{ so_number }}</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:600;">พนักงาน</div>
+          <select class="sel-inp" id="empSelect">
+            <option value="">— เลือกพนักงาน —</option>
+            {% for e in employees %}<option value="{{ e.pk }}">{{ e.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:600;">ลูกค้า</div>
+          <select class="sel-inp" id="custSelect">
+            <option value="">— Walk-in —</option>
+            {% for c in customers %}<option value="{{ c.pk }}">{{ c.name }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-items" id="orderItems">
+      <div class="order-empty" id="emptyMsg">
+        <div class="order-empty-icon">🛒</div>
+        <div style="font-size:13px;">เลือกสินค้าจากด้านซ้าย</div>
+      </div>
+    </div>
+
+    <div class="order-summary">
+      <div class="sum-row"><span>รายการ</span><span id="countDisplay">0 รายการ</span></div>
+      <div class="sum-row"><span>ยอดก่อนส่วนลด</span><span id="subtotalDisplay">฿0</span></div>
+      <div class="disc-row">
+        <span style="font-size:12px;color:var(--muted);white-space:nowrap">ส่วนลด ฿</span>
+        <input type="number" class="disc-inp" id="discountInp" value="0" min="0" oninput="calcTotal()"/>
+      </div>
+      <div class="sum-total">
+        <span>รวมสุทธิ</span>
+        <span id="totalDisplay">฿0</span>
+      </div>
+
+      <div class="pay-btns">
+        <button class="pay-btn active" onclick="setPayment(this,'cash')">💵 เงินสด</button>
+        <button class="pay-btn" onclick="setPayment(this,'transfer')">📱 โอนเงิน</button>
+      </div>
+
+      <div style="margin-bottom:8px;">
+        <input type="text" class="sel-inp" id="noteInp" placeholder="หมายเหตุ..."/>
+      </div>
+
+      <button class="btn-confirm" id="confirmBtn" onclick="submitOrder()" disabled>✓ ชำระเงิน</button>
+      <button class="btn-clear" onclick="clearOrder()">🗑 ล้างออเดอร์</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="receiptModal">
+  <div class="receipt-overlay-inner">
+    <div class="receipt-header">
+      <span class="receipt-logo-icon">☕</span>
+      <h2>Lumè Café</h2>
+      <div class="receipt-tagline">Thank you for your order</div>
+      <div class="so" id="receiptSO"></div>
+    </div>
+    <div class="receipt-divider">
+      <div class="receipt-divider-dot"></div>
+      <div class="receipt-divider-line"></div>
+      <div class="receipt-divider-dot"></div>
+    </div>
+    <div class="receipt-body">
+      <div class="receipt-so-row">
+        <span id="receiptDate"></span>
+        <span id="receiptEmp"></span>
+      </div>
+      <div class="receipt-items" id="receiptItems"></div>
+      <div id="receiptSubtotalRow" style="display:none">
+        <div class="receipt-subtotal-row"><span>ยอดรวม</span><span id="receiptSubtotal"></span></div>
+      </div>
+      <div id="receiptDiscRow" class="receipt-discount-row" style="display:none"><span>ส่วนลด</span><span id="receiptDisc"></span></div>
+      <div class="receipt-total-wrap">
+        <div class="receipt-total-lbl">ยอดชำระ</div>
+        <div class="receipt-total-val" id="receiptTotal">฿0</div>
+      </div>
+      <div class="receipt-points-wrap" id="receiptPoints"></div>
+    </div>
+    <div class="receipt-footer">
+      <!-- ข้อมูลร้าน -->
+      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px dashed #e0d8cf;text-align:left;">
+        <div style="font-size:1.4rem;flex-shrink:0;">☕</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#3d2314;margin-bottom:3px;">Lumè Café</div>
+          <div style="font-size:11px;color:#8a7060;line-height:1.8;">
+            📍 123 ถ.เจริญกรุง เขตบางรัก กรุงเทพฯ 10500<br>
+            📞 02-744-7167 &nbsp;·&nbsp; 🕐 08:00 – 20:00 น.<br>
+            🌐 www.lumecafe.th
+          </div>
+        </div>
+      </div>
+      <!-- สะสมแต้ม -->
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        <div style="font-size:1.3rem;">⭐</div>
+        <div style="text-align:left;">
+          <div style="font-size:11px;font-weight:700;color:#a06820;margin-bottom:2px;">โปรแกรมสะสมแต้ม</div>
+          <div style="font-size:10px;color:#92400e;line-height:1.6;">ทุก ฿10 = 1 แต้ม · สะสม 200 แต้ม รับส่วนลด ฿50<br>แสดงเบอร์โทรทุกครั้งเพื่อสะสมแต้ม</div>
+        </div>
+      </div>
+      <!-- บาร์โค้ด -->
+      <div class="receipt-barcode" id="receiptBarcode"></div>
+      <div style="font-size:10px;color:#baa890;letter-spacing:1px;margin-bottom:12px;" id="receiptSOCode"></div>
+      <!-- เงื่อนไข -->
+      <div style="font-size:10px;color:#baa890;line-height:1.8;margin-bottom:12px;text-align:left;border-top:1px dashed #e0d8cf;padding-top:10px;">
+        • กรุณาเก็บใบเสร็จไว้เป็นหลักฐาน<br>
+        • ไม่รับคืนสินค้าหลังชำระเงินแล้ว<br>
+        • หากมีปัญหาติดต่อพนักงานภายใน 30 นาที
+      </div>
+      <div class="receipt-thanks">ขอบคุณที่ใช้บริการ 🙏<br><span style="font-size:10px;letter-spacing:1px;color:#baa890">— Lumè Café —</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;">
+        <button class="btn-new-order" onclick="window.print()" style="background:#f0e8de;color:#6b4a32;border:1px solid #e0c8a0;">🖨️ พิมพ์</button>
+        <button class="btn-new-order" onclick="closeReceipt()">+ ออเดอร์ใหม่</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% csrf_token %}
+<script>
+const csrfEl = document.querySelector('[name=csrfmiddlewaretoken]');
+const CSRF = csrfEl ? csrfEl.value : '';
+let allProducts = [];
+let cart = {};
+let currentCat = 'all';
+let paymentMethod = 'cash';
+
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('th-TH');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+fetch('/api/products/')
+  .then(r => r.json())
+  .then(data => { allProducts = data.products; renderProducts(allProducts); });
+
+function getCatIcon(cat) {
+  var icons = {coffee:'☕',tea:'🍵',smoothie:'🥤',bakery:'🥐',ingredient:'🥛'};
+  return icons[cat] || '🍽️';
+}
+function getCatLabel(cat) {
+  var labels = {coffee:'Coffee',tea:'Tea',smoothie:'Smoothie',bakery:'Bakery',ingredient:'วัตถุดิบ'};
+  return labels[cat] || cat;
+}
+
+function renderProducts(list) {
+  var grid = document.getElementById('prodGrid');
+  if (!list.length) {
+    grid.innerHTML = '<div style="color:var(--muted);font-size:13px;grid-column:1/-1;text-align:center;padding:40px">ไม่พบสินค้า</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var p = list[i];
+    var outOfStock = parseFloat(p.stock_qty) <= 0;
+    var imgHtml = p.image_url
+      ? '<img src="' + p.image_url + '" class="prod-img" onerror="this.style.display=\'none\'">'
+      : '<div class="prod-img" style="display:flex;align-items:center;justify-content:center;font-size:1.8rem">' + getCatIcon(p.category) + '</div>';
+    var stockTxt = outOfStock ? '⛔ หมด' : 'สต็อก: ' + parseFloat(p.stock_qty).toFixed(0) + ' ' + p.unit;
+    html += '<div class="prod-card ' + (outOfStock ? 'out' : '') + '" ' + (outOfStock ? '' : 'onclick="addToCart(' + i + ')"') + '>';
+    html += imgHtml;
+    html += '<div class="prod-cat">' + getCatLabel(p.category) + '</div>';
+    html += '<div class="prod-name">' + p.name + '</div>';
+    html += '<div class="prod-price">฿' + parseFloat(p.sale_price).toFixed(0) + '</div>';
+    html += '<div class="prod-stock">' + stockTxt + '</div>';
+    html += '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function filterCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  var filtered = cat === 'all' ? allProducts : allProducts.filter(function(p) { return p.category === cat; });
+  renderProducts(filtered);
+}
+
+function searchProducts(q) {
+  var filtered = allProducts.filter(function(p) {
+    var matchCat = currentCat === 'all' || p.category === currentCat;
+    return matchCat && (p.name.toLowerCase().indexOf(q.toLowerCase()) >= 0 || p.code.toLowerCase().indexOf(q.toLowerCase()) >= 0);
+  });
+  renderProducts(filtered);
+}
+
+function addToCart(idx) {
+  var visibleProducts = currentCat === 'all' ? allProducts : allProducts.filter(function(p) { return p.category === currentCat; });
+  var p = visibleProducts[idx];
+  if (!p) return;
+  var pid = p.id;
+  if (cart[pid]) { cart[pid].qty += 1; }
+  else { cart[pid] = {id:p.id, name:p.name, sale_price:p.sale_price, unit:p.unit, qty:1}; }
+  renderCart();
+}
+
+function changeQty(id, delta) {
+  if (!cart[id]) return;
+  cart[id].qty += delta;
+  if (cart[id].qty <= 0) delete cart[id];
+  renderCart();
+}
+
+function removeItem(id) { delete cart[id]; renderCart(); }
+
+function renderCart() {
+  var container = document.getElementById('orderItems');
+  var keys = Object.keys(cart);
+  if (!keys.length) {
+    container.innerHTML = '<div class="order-empty"><div class="order-empty-icon">🛒</div><div style="font-size:13px;">เลือกสินค้าจากด้านซ้าย</div></div>';
+    calcTotal(); return;
+  }
+  var html = '';
+  for (var k = 0; k < keys.length; k++) {
+    var id = keys[k];
+    var item = cart[id];
+    html += '<div class="order-item">';
+    html += '<div style="flex:1"><div class="oi-name">' + item.name + '</div>';
+    html += '<div class="oi-price">฿' + parseFloat(item.sale_price).toFixed(0) + ' × ' + item.qty + '</div></div>';
+    html += '<div class="qty-ctrl">';
+    html += '<button class="qty-btn" onclick="changeQty(' + id + ',-1)">−</button>';
+    html += '<span class="qty-num">' + item.qty + '</span>';
+    html += '<button class="qty-btn" onclick="changeQty(' + id + ',1)">+</button>';
+    html += '</div>';
+    html += '<span class="oi-total">฿' + (item.qty * parseFloat(item.sale_price)).toFixed(0) + '</span>';
+    html += '<button class="oi-del" onclick="removeItem(' + id + ')">×</button>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+  calcTotal();
+}
+
+function calcTotal() {
+  var count = 0, subtotal = 0;
+  Object.values(cart).forEach(function(item) {
+    count += item.qty;
+    subtotal += item.qty * parseFloat(item.sale_price);
+  });
+  var discount = parseFloat(document.getElementById('discountInp').value) || 0;
+  var total = Math.max(0, subtotal - discount);
+  document.getElementById('countDisplay').textContent = count + ' รายการ';
+  document.getElementById('subtotalDisplay').textContent = '฿' + subtotal.toFixed(0);
+  document.getElementById('totalDisplay').textContent = '฿' + total.toFixed(0);
+  document.getElementById('confirmBtn').disabled = (count === 0);
+}
+
+function setPayment(btn, method) {
+  paymentMethod = method;
+  document.querySelectorAll('.pay-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+function clearOrder() {
+  if (Object.keys(cart).length && !confirm('ล้างออเดอร์ทั้งหมด?')) return;
+  cart = {};
+  document.getElementById('discountInp').value = 0;
+  document.getElementById('noteInp').value = '';
+  renderCart();
+}
+
+function submitOrder() {
+  var items = Object.values(cart).map(function(item) {
+    return {id: item.id, qty: item.qty, price: parseFloat(item.sale_price), name: item.name};
+  });
+  if (!items.length) return;
+  var discount = parseFloat(document.getElementById('discountInp').value) || 0;
+  var payload = {
+    items: items, discount: discount,
+    employee_id: document.getElementById('empSelect').value,
+    customer_id: document.getElementById('custSelect').value,
+    note: document.getElementById('noteInp').value,
+    payment: paymentMethod
+  };
+  document.getElementById('confirmBtn').disabled = true;
+  document.getElementById('confirmBtn').textContent = 'กำลังบันทึก...';
+  fetch('/pos/submit/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'X-CSRFToken': CSRF},
+    body: JSON.stringify(payload)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.ok) {
+      showReceipt(data.so_number, items, discount, data.total, data.points_earned||0);
+    } else {
+      alert('เกิดข้อผิดพลาด: ' + (data.error || 'Unknown'));
+      document.getElementById('confirmBtn').disabled = false;
+      document.getElementById('confirmBtn').textContent = '✓ ชำระเงิน';
+    }
+  });
+}
+
+function showReceipt(soNum, items, discount, total, pointsEarned) {
+  document.getElementById('receiptSO').textContent = soNum + ' · ' + new Date().toLocaleString('th-TH');
+  var rHtml = '';
+  items.forEach(function(i) {
+    rHtml += '<div class="receipt-item"><span>' + i.name + ' × ' + i.qty + '</span><span>฿' + (i.qty * i.price).toFixed(0) + '</span></div>';
+  });
+  if (discount > 0) rHtml += '<div class="receipt-item" style="color:var(--red)"><span>ส่วนลด</span><span>-฿' + discount.toFixed(0) + '</span></div>';
+  document.getElementById('receiptItems').innerHTML = rHtml;
+  var pointsEl=document.getElementById('receiptPoints');
+  if(pointsEarned>0){pointsEl.style.display='block';pointsEl.textContent='⭐ ได้รับ '+pointsEarned+' แต้ม!';}
+  var pe = document.getElementById('receiptPoints');
+  if(pointsEarned > 0){ pe.style.display='block'; pe.textContent='⭐ ได้รับ '+pointsEarned+' แต้มสะสม!'; } else { pe.style.display='none'; }
+  document.getElementById('receiptTotal').textContent = '฿' + parseFloat(total).toFixed(2);
+  document.getElementById('receiptModal').classList.add('show');
+}
+
+function closeReceipt() {
+  document.getElementById('receiptModal').classList.remove('show');
+  cart = {};
+  document.getElementById('discountInp').value = 0;
+  document.getElementById('noteInp').value = '';
+  document.getElementById('confirmBtn').textContent = '✓ ชำระเงิน';
+  renderCart();
+  fetch('/api/products/').then(function(r) { return r.json(); }).then(function(data) {
+    allProducts = data.products;
+    var activeBtn = document.querySelector('.cat-btn.active');
+    filterCat(currentCat, activeBtn || document.querySelector('.cat-btn'));
+  });
+}
+</script>
+</body>

@@ -1,0 +1,28 @@
+{% extends 'cafe/base.html' %}
+{% block title %}รายการซื้อ{% endblock %}{% block n_po %}active{% endblock %}{% block page_title %}รายการซื้อ{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <div class="ftab">
+    <a href="?status=" class="{% if not status %}act{% endif %}">ทั้งหมด</a>
+    <a href="?status=confirmed" class="{% if status == 'confirmed' %}act{% endif %}">ยืนยัน</a>
+    <a href="?status=received" class="{% if status == 'received' %}act{% endif %}">รับแล้ว</a>
+  </div>
+  <a href="{% url 'purchase_new' %}" class="btn-p" style="text-decoration:none">+ สร้างรายการซื้อ</a>
+</div>
+<div class="card-box"><div style="overflow-x:auto"><table class="tbl">
+  <thead><tr><th>เลขที่</th><th>วันที่</th><th>ซัพพลายเออร์</th><th>รายการ</th><th>ยอดรวม</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+  <tbody>{% for o in orders %}<tr>
+    <td><a href="{% url 'purchase_detail' o.pk %}" style="color:#c8873a;text-decoration:none;font-weight:500">{{ o.po_number }}</a></td>
+    <td style="color:#64748b">{{ o.date|date:"d/m/Y" }}</td>
+    <td>{{ o.supplier.name|default:'—' }}</td>
+    <td style="color:#64748b">{{ o.items.count }} รายการ</td>
+    <td style="font-weight:600">฿{{ o.total|floatformat:2 }}</td>
+    <td>{% if o.status == 'received' %}<span class="badge badge-green">รับแล้ว</span>{% elif o.status == 'confirmed' %}<span class="badge badge-blue">ยืนยัน</span>{% else %}<span class="badge badge-gray">แบบร่าง</span>{% endif %}</td>
+    <td style="white-space:nowrap">
+      {% if o.status == 'confirmed' %}<form method="POST" action="{% url 'purchase_receive' o.pk %}" style="display:inline" onsubmit="return confirm('ยืนยันรับสินค้า?')">{% csrf_token %}<button type="submit" class="btn-g btn-sm" style="margin-right:4px">✓ รับ</button></form>{% endif %}
+      <button onclick="openDeleteModal('{% url 'purchase_delete' o.pk %}','ลบรายการซื้อ','ลบ {{ o.po_number }} ออกจากระบบ?')"
+        style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit;">🗑</button>
+    </td>
+  </tr>{% empty %}<tr><td colspan="7" style="text-align:center;padding:28px;color:#94a3b8">ไม่มีรายการ</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

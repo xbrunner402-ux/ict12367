@@ -1,0 +1,75 @@
+{% extends 'cafe/base.html' %}
+{% block title %}ตั้งค่าร้าน{% endblock %}
+{% block page_title %}ตั้งค่าร้าน{% endblock %}
+{% block content %}
+<form method="POST">{% csrf_token %}
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="fs">
+      <div class="fs-hdr"><div class="fs-icon">🏪</div><span class="fs-title">ข้อมูลร้าน</span></div>
+      <div class="fs-body">
+        <div class="row g-2">
+          <div class="col-12"><label class="lbl">ชื่อร้าน *</label><input type="text" name="shop_name" class="inp" value="{{ s.shop_name }}" required/></div>
+          <div class="col-12"><label class="lbl">ที่อยู่</label><input type="text" name="shop_address" class="inp" value="{{ s.shop_address }}"/></div>
+          <div class="col-md-6"><label class="lbl">เบอร์โทร</label><input type="text" name="shop_phone" class="inp" value="{{ s.shop_phone }}"/></div>
+          <div class="col-md-6"><label class="lbl">เวลาเปิด-ปิด</label><input type="text" name="shop_hours" class="inp" value="{{ s.shop_hours }}"/></div>
+          <div class="col-12"><label class="lbl">เว็บไซต์</label><input type="text" name="shop_website" class="inp" value="{{ s.shop_website }}"/></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fs">
+      <div class="fs-hdr"><div class="fs-icon">🔐</div><span class="fs-title">ความปลอดภัย</span></div>
+      <div class="fs-body">
+        <label class="lbl">รหัสผ่านสำหรับลบข้อมูล</label>
+        <input type="text" name="delete_password" class="inp" value="{{ s.delete_password }}"/>
+        <div style="font-size:11px;color:#8a7060;margin-top:6px">⚠️ รหัสนี้ใช้ยืนยันการลบข้อมูลทุกครั้ง</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="fs">
+      <div class="fs-hdr"><div class="fs-icon">⭐</div><span class="fs-title">ระบบสะสมแต้ม</span></div>
+      <div class="fs-body">
+        <div class="row g-2">
+          <div class="col-12">
+            <label class="lbl">ซื้อครบ (บาท) = 1 แต้ม</label>
+            <input type="number" name="points_per_baht" class="inp" value="{{ s.points_per_baht }}" min="1"/>
+            <div style="font-size:11px;color:#8a7060;margin-top:4px">ค่าเริ่มต้น: ทุก 10 บาท = 1 แต้ม</div>
+          </div>
+          <div class="col-md-6">
+            <label class="lbl">แต้มที่ใช้แลก</label>
+            <input type="number" name="points_per_discount_baht" class="inp" value="{{ s.points_per_discount_baht }}" min="1"/>
+          </div>
+          <div class="col-md-6">
+            <label class="lbl">ได้ส่วนลด (บาท)</label>
+            <input type="number" name="points_discount_value" class="inp" value="{{ s.points_discount_value }}" min="1"/>
+          </div>
+          <div class="col-12">
+            <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:12px;color:#92400e">
+              💡 ตัวอย่าง: ใช้ {{ s.points_per_discount_baht }} แต้ม แลกส่วนลด ฿{{ s.points_discount_value }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fs">
+      <div class="fs-hdr"><div class="fs-icon">💾</div><span class="fs-title">Backup ข้อมูล</span></div>
+      <div class="fs-body">
+        <p style="font-size:13px;color:#8a7060;margin-bottom:12px">ดาวน์โหลดไฟล์ฐานข้อมูลเพื่อสำรองข้อมูล ควรทำทุกสัปดาห์</p>
+        <a href="/admin/" class="btn-s" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px">
+          💾 เข้า Admin เพื่อ Backup
+        </a>
+        <div style="font-size:11px;color:#8a7060;margin-top:8px">คัดลอกไฟล์ <code style="background:#f0e8da;padding:1px 5px;border-radius:3px">db.sqlite3</code> ในโฟลเดอร์โปรเจกต์</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:8px;display:flex;justify-content:flex-end">
+  <button type="submit" class="btn-p" style="padding:10px 28px">💾 บันทึกการตั้งค่า</button>
+</div>
+</form>
+{% endblock %}

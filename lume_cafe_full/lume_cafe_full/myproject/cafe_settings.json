@@ -1,0 +1,11 @@
+{
+  "shop_name": "Lumè Café",
+  "shop_address": "123 ถ.เจริญกรุง เขตบางรัก กรุงเทพฯ 10500",
+  "shop_phone": "02-744-7167",
+  "shop_hours": "08:00 – 20:00 น.",
+  "shop_website": "www.lumecafe.th",
+  "delete_password": "1234",
+  "points_per_baht": "10",
+  "points_per_discount_baht": "200",
+  "points_discount_value": "50"
+}

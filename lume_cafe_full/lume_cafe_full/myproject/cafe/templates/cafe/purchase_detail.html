@@ -1,0 +1,18 @@
+{% extends 'cafe/base.html' %}
+{% block title %}{{ order.po_number }}{% endblock %}{% block n_po %}active{% endblock %}{% block page_title %}{{ order.po_number }}{% endblock %}
+{% block content %}
+<div style="margin-bottom:12px"><a href="{% url 'purchase_list' %}" style="font-size:12px;color:#c8873a;text-decoration:none">← รายการซื้อ</a></div>
+<div class="card-box">
+  <div class="card-box-hdr"><span class="card-box-title">{{ order.po_number }} — {{ order.supplier.name|default:'ไม่ระบุ' }}</span>
+    {% if order.status == 'received' %}<span class="badge badge-green">รับแล้ว</span>{% elif order.status == 'confirmed' %}<span class="badge badge-blue">ยืนยัน</span>{% else %}<span class="badge badge-gray">แบบร่าง</span>{% endif %}
+  </div>
+  <table class="tbl"><thead><tr><th>วัตถุดิบ</th><th>จำนวน</th><th>ราคา/หน่วย</th><th>รวม</th></tr></thead>
+  <tbody>{% for item in order.items.all %}<tr>
+    <td style="font-weight:500">{{ item.ingredient.name }}<div style="font-size:11px;color:#94a3b8">{{ item.ingredient.unit }}</div></td>
+    <td>{{ item.quantity }}</td><td>฿{{ item.price|floatformat:2 }}</td>
+    <td style="font-weight:600">฿{{ item.total|floatformat:2 }}</td>
+  </tr>{% endfor %}</tbody></table>
+  <div style="padding:12px 14px;text-align:right;font-size:15px;font-weight:700;border-top:1px solid #f1f5f9">ยอดรวม: <span style="color:#c8873a">฿{{ order.total|floatformat:2 }}</span></div>
+</div>
+{% if order.status == 'confirmed' %}<div style="text-align:right;margin-top:12px"><form method="POST" action="{% url 'purchase_receive' order.pk %}" onsubmit="return confirm('ยืนยันรับสินค้า?')">{% csrf_token %}<button type="submit" class="btn-g">✓ รับสินค้า (อัปเดตสต็อก)</button></form></div>{% endif %}
+{% endblock %}

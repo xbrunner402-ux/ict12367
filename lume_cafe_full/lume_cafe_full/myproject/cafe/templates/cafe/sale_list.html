@@ -1,0 +1,83 @@
+{% extends 'cafe/base.html' %}
+{% block title %}รายการขาย{% endblock %}
+{% block n_sales %}active{% endblock %}
+{% block page_title %}รายการขาย{% endblock %}
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <div class="ftab">
+      <a href="?status=" class="{% if not status %}act{% endif %}">ทั้งหมด</a>
+      <a href="?status=draft" class="{% if status == 'draft' %}act{% endif %}">แบบร่าง</a>
+      <a href="?status=confirmed" class="{% if status == 'confirmed' %}act{% endif %}">ยืนยัน</a>
+      <a href="?status=completed" class="{% if status == 'completed' %}act{% endif %}">เสร็จสิ้น</a>
+      <a href="?status=cancelled" class="{% if status == 'cancelled' %}act{% endif %}">ยกเลิก</a>
+    </div>
+    <input type="text" id="liveSearch" class="inp" placeholder="🔍 ค้นหาเลขที่, ลูกค้า..." style="width:220px" oninput="liveFilter(this.value)"/>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="?export=csv&status={{ status }}" class="btn-s btn-sm" style="text-decoration:none">📥 Export CSV</a>
+    <a href="{% url 'sale_new' %}" class="btn-p" style="text-decoration:none">+ สร้างรายการขาย</a>
+  </div>
+</div>
+
+<div class="card-box">
+  <div style="overflow-x:auto">
+    <table class="tbl">
+      <thead>
+        <tr><th>เลขที่</th><th>วันที่</th><th>ลูกค้า</th><th>ช่องทาง</th><th>รายการ</th><th>ยอดรวม</th><th>สถานะ</th><th>จัดการ</th></tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}<tr class="data-row">
+          <td><a href="{% url 'sale_detail' o.pk %}" style="color:#c8873a;text-decoration:none;font-weight:500">{{ o.so_number }}</a></td>
+          <td style="color:#8a7060">{{ o.date|date:"d/m/Y" }}</td>
+          <td>{{ o.customer.name|default:'Walk-in' }}</td>
+          <td><span class="badge badge-gray">{{ o.get_order_type_display }}</span></td>
+          <td style="color:#8a7060">{{ o.items.count }} รายการ</td>
+          <td style="font-weight:600;color:#3a7d5a">฿{{ o.total|floatformat:2 }}</td>
+          <td>
+            {% if o.status == 'completed' %}<span class="badge badge-green">เสร็จสิ้น</span>
+            {% elif o.status == 'confirmed' %}<span class="badge badge-blue">ยืนยัน</span>
+            {% elif o.status == 'draft' %}<span class="badge badge-gray">แบบร่าง</span>
+            {% else %}<span class="badge badge-red">ยกเลิก</span>{% endif %}
+          </td>
+          <td style="white-space:nowrap">
+            <form method="POST" action="{% url 'sale_status' o.pk %}" style="display:inline">
+              {% csrf_token %}
+              <select name="status" class="inp" style="padding:3px 6px;font-size:11px;width:auto;margin-right:4px" onchange="this.form.submit()">
+                <option value="draft" {% if o.status == 'draft' %}selected{% endif %}>แบบร่าง</option>
+                <option value="confirmed" {% if o.status == 'confirmed' %}selected{% endif %}>ยืนยัน</option>
+                <option value="completed" {% if o.status == 'completed' %}selected{% endif %}>เสร็จสิ้น</option>
+                <option value="cancelled" {% if o.status == 'cancelled' %}selected{% endif %}>ยกเลิก</option>
+              </select>
+            </form>
+            <button onclick="openDeleteModal('{% url 'sale_delete' o.pk %}','ลบรายการขาย','ลบ {{ o.so_number }}?')"
+              style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;border-radius:4px;padding:3px 8px;font-size:11px;cursor:pointer;font-family:inherit;">🗑</button>
+          </td>
+        </tr>
+        {% empty %}<tr><td colspan="8" style="text-align:center;padding:28px;color:#94a3b8">ไม่มีรายการ</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if page_obj.has_other_pages %}
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);">
+    <div style="font-size:12px;color:#8a7060">
+      แสดง {{ page_obj.start_index }}–{{ page_obj.end_index }} จาก {{ page_obj.paginator.count }} รายการ
+    </div>
+    <div style="display:flex;gap:4px">
+      {% if page_obj.has_previous %}
+        <a href="?status={{ status }}&page={{ page_obj.previous_page_number }}" class="btn-s btn-sm" style="text-decoration:none">← ก่อนหน้า</a>
+      {% endif %}
+      <span style="padding:5px 12px;font-size:13px;font-weight:600;color:var(--gold)">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?status={{ status }}&page={{ page_obj.next_page_number }}" class="btn-s btn-sm" style="text-decoration:none">ถัดไป →</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
+{% block extra_js %}<script>
+function liveFilter(q){q=q.toLowerCase();document.querySelectorAll('.data-row').forEach(function(r){var t=r.textContent.toLowerCase();r.style.display=t.includes(q)?'':'none';});}
+</script>{% endblock %}

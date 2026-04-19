@@ -1,0 +1,102 @@
+{% extends 'cafe/base.html' %}
+{% block title %}สร้างรายการขาย{% endblock %}{% block n_sale_new %}active{% endblock %}{% block page_title %}สร้างรายการขาย{% endblock %}
+{% block content %}
+<div style="margin-bottom:12px"><a href="{% url 'sale_list' %}" style="font-size:12px;color:#c8873a;text-decoration:none">← รายการขาย</a></div>
+<form method="POST" id="soForm">{% csrf_token %}
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="fs">
+      <div class="fs-hdr"><div class="fs-icon">📋</div><span class="fs-title">ข้อมูล</span></div>
+      <div class="fs-body"><div class="row g-3">
+        <div class="col-md-4"><label class="lbl">เลขที่ *</label><input type="text" name="so_number" class="inp" value="{{ so_number }}" required/></div>
+        <div class="col-md-4"><label class="lbl">วันที่ *</label><input type="date" name="date" class="inp" value="{{ today }}" required/></div>
+        <div class="col-md-4"><label class="lbl">ช่องทาง</label><select name="order_type" class="inp"><option value="dine_in">Dine-in</option><option value="pickup">Pickup</option><option value="delivery">Delivery</option></select></div>
+      </div></div>
+    </div>
+    <div class="fs">
+      <div class="fs-hdr"><div class="fs-icon">☕</div><span class="fs-title">สินค้า</span><button type="button" class="btn-p btn-sm ms-auto" onclick="openModal()">+ เลือกสินค้า</button></div>
+      <div style="overflow-x:auto"><table class="tbl"><thead><tr><th></th><th>รหัส</th><th>ชื่อ *</th><th>จำนวน *</th><th>ราคา *</th><th>ส่วนลด</th><th>รวม</th><th></th></tr></thead>
+      <tbody id="itemRows"><tr id="emptyRow"><td colspan="8" style="text-align:center;padding:20px;color:#94a3b8;font-size:13px">กด "+ เลือกสินค้า"</td></tr></tbody></table></div>
+      <div style="padding:12px 14px;border-top:1px solid #f1f5f9">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:13px"><span style="color:#64748b">ส่วนลดรวม ฿</span><input type="number" name="discount" id="discInp" class="ni" value="0" min="0" onchange="calcSummary()" style="width:110px"/></div>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;padding-top:8px;border-top:1px solid #e2e8f0"><span>ยอดรวมสุทธิ</span><span id="grandTotal" style="color:#c8873a">฿0.00</span></div>
+      </div>
+    </div>
+    <div class="fs"><div class="fs-hdr"><div class="fs-icon">📝</div><span class="fs-title">หมายเหตุ</span></div>
+      <div class="fs-body"><textarea name="note" class="inp" rows="2" placeholder="หมายเหตุ..."></textarea></div></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="fs"><div class="fs-hdr"><div class="fs-icon">👤</div><span class="fs-title">ลูกค้า</span></div>
+      <div class="fs-body">
+        <label class="lbl">ลูกค้า</label>
+        <select name="customer_id" class="inp mb-2" onchange="fillCust(this)">
+          <option value="">— Walk-in —</option>
+          {% for c in customers %}<option value="{{ c.pk }}" data-phone="{{ c.phone }}" data-email="{{ c.email }}">{{ c.name }} ({{ c.code }})</option>{% endfor %}
+        </select>
+        <label class="lbl">เบอร์โทร</label><input type="text" id="cPhone" class="inp mb-2" readonly style="background:#f8fafc"/>
+        <label class="lbl">อีเมล</label><input type="email" id="cEmail" class="inp" readonly style="background:#f8fafc"/>
+      </div>
+    </div>
+    <div class="fs"><div class="fs-hdr"><div class="fs-icon">👨‍💼</div><span class="fs-title">พนักงาน</span></div>
+      <div class="fs-body"><select name="employee_id" class="inp"><option value="">— เลือกพนักงาน —</option>{% for e in employees %}<option value="{{ e.pk }}">{{ e.name }}</option>{% endfor %}</select></div>
+    </div>
+  </div>
+</div>
+<div style="display:flex;justify-content:flex-end;gap:10px;padding-bottom:20px">
+  <a href="{% url 'sale_list' %}" class="btn-s" style="text-decoration:none">กลับ</a>
+  <button type="submit" class="btn-p">บันทึก</button>
+</div>
+</form>
+<div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:10px;width:580px;max-height:80vh;display:flex;flex-direction:column">
+    <div style="padding:14px 18px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">เลือกสินค้า</span><button onclick="closeModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#64748b">×</button></div>
+    <div style="padding:10px 18px;border-bottom:1px solid #e2e8f0"><input type="text" id="mSearch" class="inp" placeholder="ค้นหา..." oninput="filterP(this.value)"/></div>
+    <div id="mList" style="overflow-y:auto;flex:1;padding:6px 0"></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+let products=[]; let rc=0;
+fetch('/api/products/').then(r=>r.json()).then(d=>{products=d.products;});
+function openModal(){document.getElementById('modal').style.display='flex';renderP(products);}
+function closeModal(){document.getElementById('modal').style.display='none';}
+function renderP(list){
+  const el=document.getElementById('mList');
+  el.innerHTML=list.map(p=>`<div onclick='selProd(${JSON.stringify(p).replace(/'/g,"\\'")})'
+    style="padding:10px 18px;cursor:pointer;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center"
+    onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''">
+    <div><div style="font-size:13px;font-weight:500">${p.name}</div><div style="font-size:11px;color:#94a3b8">${p.code} · ${p.unit}</div></div>
+    <div style="font-size:13px;font-weight:600;color:#c8873a">฿${parseFloat(p.sale_price).toFixed(2)}</div>
+  </div>`).join('');
+}
+function filterP(q){renderP(products.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())||p.code.toLowerCase().includes(q.toLowerCase())));}
+function selProd(p){
+  closeModal(); document.getElementById('emptyRow')?.remove(); rc++;
+  const r=document.createElement('tr'); r.id='r'+rc;
+  const n=rc;
+  r.innerHTML=`<td><input type="hidden" name="product_id" value="${p.id}"/><span style="font-size:11px;color:#94a3b8">${n}</span></td>
+    <td style="font-size:12px;color:#64748b">${p.code}</td><td style="font-size:13px;font-weight:500">${p.name}</td>
+    <td><input type="number" name="qty" class="ni" value="1" min="0.01" step="0.01" onchange="calcR(${n})"/></td>
+    <td><input type="number" name="price" class="ni" value="${parseFloat(p.sale_price).toFixed(2)}" min="0" step="0.01" onchange="calcR(${n})" style="width:90px"/></td>
+    <td><input type="number" name="item_discount" class="ni" value="0" min="0" step="0.01" onchange="calcR(${n})"/></td>
+    <td><span id="rt${n}" style="font-size:13px;font-weight:600;color:#16a34a">${parseFloat(p.sale_price).toFixed(2)}</span></td>
+    <td><button type="button" onclick="delR(${n})" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:16px">×</button></td>`;
+  document.getElementById('itemRows').appendChild(r); calcSummary();
+}
+function calcR(n){
+  const r=document.getElementById('r'+n); if(!r)return;
+  const q=parseFloat(r.querySelector('[name="qty"]').value)||0;
+  const p=parseFloat(r.querySelector('[name="price"]').value)||0;
+  const d=parseFloat(r.querySelector('[name="item_discount"]').value)||0;
+  document.getElementById('rt'+n).textContent=(q*p-d).toFixed(2); calcSummary();
+}
+function calcSummary(){
+  let t=0; document.querySelectorAll('[id^="rt"]').forEach(e=>{t+=parseFloat(e.textContent)||0;});
+  const d=parseFloat(document.getElementById('discInp').value)||0;
+  document.getElementById('grandTotal').textContent='฿'+(t-d).toFixed(2);
+}
+function delR(n){document.getElementById('r'+n)?.remove(); calcSummary();}
+function fillCust(s){const o=s.selectedOptions[0];document.getElementById('cPhone').value=o.dataset.phone||'';document.getElementById('cEmail').value=o.dataset.email||'';}
+</script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'cafe/base.html' %}
+{% block title %}เพิ่มวัตถุดิบ{% endblock %}{% block n_ing %}active{% endblock %}{% block page_title %}เพิ่มวัตถุดิบ{% endblock %}
+{% block content %}
+<div class="fs" style="max-width:560px"><div class="fs-hdr"><div class="fs-icon">🥛</div><span class="fs-title">ข้อมูลวัตถุดิบ</span></div>
+<div class="fs-body"><form method="POST">{% csrf_token %}
+  <div class="row g-3 mb-3">
+    <div class="col-md-8"><label class="lbl">ชื่อวัตถุดิบ *</label><input type="text" name="name" class="inp" required/></div>
+    <div class="col-md-4"><label class="lbl">หน่วย *</label><select name="unit" class="inp"><option value="g">กรัม</option><option value="kg">กิโลกรัม</option><option value="ml">มล.</option><option value="l">ลิตร</option><option value="pcs">ชิ้น</option></select></div>
+  </div>
+  <div class="row g-3 mb-4">
+    <div class="col-md-4"><label class="lbl">สต็อกเริ่มต้น</label><input type="number" name="stock_qty" class="inp" value="0" step="0.01"/></div>
+    <div class="col-md-4"><label class="lbl">ขั้นต่ำ</label><input type="number" name="min_stock" class="inp" value="0" step="0.01"/></div>
+    <div class="col-md-4"><label class="lbl">ราคา/หน่วย ฿</label><input type="number" name="cost_per_unit" class="inp" value="0" step="0.01"/></div>
+  </div>
+  <div style="display:flex;gap:10px"><button type="submit" class="btn-p">บันทึก</button><a href="{% url 'ingredient_list' %}" class="btn-s" style="text-decoration:none">ยกเลิก</a></div>
+</form></div></div>
+{% endblock %}

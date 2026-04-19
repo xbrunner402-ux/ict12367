@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="th" id="html-root">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}Lumè Café{% endblock %}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --sb:#1c1410;--sb-hover:#2a1f17;--bg:#f5efe6;--card:#fffdf9;--border:#e8d9c5;
+      --text:#2c1e10;--muted:#8a7060;--gold:#c8873a;--gold-light:#f5c878;
+      --espresso:#3d2314;--latte:#b07340;--green:#3a7d5a;--red:#b83030;--blue:#2e5ea8;--indigo:#5546a8;
+    }
+    [data-theme="dark"] {
+      --sb:#0e0a06;--sb-hover:#1a1008;--bg:#1a1208;--card:#231a0f;--border:#3d2e1a;
+      --text:#f0e8da;--muted:#8a7050;--gold:#c8873a;--gold-light:#f5c878;
+      --espresso:#f0d8b0;--green:#5aba80;--red:#e06060;--blue:#6090d8;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;transition:background .2s,color .2s;}
+    .sidebar{width:210px;background:var(--sb);min-height:100vh;position:fixed;left:0;top:0;z-index:200;display:flex;flex-direction:column;border-right:1px solid rgba(200,135,58,.15);}
+    .sb-logo{padding:20px 16px 16px;border-bottom:1px solid rgba(200,135,58,.2);background:linear-gradient(135deg,#2a1a0e,#1c1410);}
+    .sb-logo h1{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:800;color:var(--gold-light);letter-spacing:1px;}
+    .sb-logo small{font-size:9px;color:#7a5c40;letter-spacing:2px;text-transform:uppercase;margin-top:2px;display:block;}
+    .logo-dot{display:inline-block;width:6px;height:6px;background:var(--gold);border-radius:50%;margin-right:4px;vertical-align:middle;}
+    .sb-nav{flex:1;padding:8px 0;overflow-y:auto;}
+    .sb-nav::-webkit-scrollbar{width:3px;}
+    .sb-nav::-webkit-scrollbar-thumb{background:#3d2a18;border-radius:2px;}
+    .sb-group{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#5a3e28;padding:12px 16px 4px;}
+    .sb-link{display:flex;align-items:center;gap:9px;padding:9px 16px;color:#9a7a60;text-decoration:none;font-size:13px;transition:all .15s;border-left:3px solid transparent;}
+    .sb-link:hover{background:var(--sb-hover);color:#d4a97a;}
+    .sb-link.active{background:rgba(200,135,58,.12);color:var(--gold-light);border-left-color:var(--gold);font-weight:600;}
+    .sb-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+    .sb-link.pos-link{background:linear-gradient(135deg,rgba(200,135,58,.25),rgba(180,100,30,.15));color:var(--gold-light);margin:8px 10px;border-radius:8px;border:1px solid rgba(200,135,58,.3);border-left:1px solid rgba(200,135,58,.3);justify-content:center;font-weight:700;font-size:12px;padding:10px;}
+    .sb-link.pos-link:hover{background:linear-gradient(135deg,rgba(200,135,58,.4),rgba(180,100,30,.3));color:#ffe4a0;}
+    .sb-link.kds-link{background:rgba(58,138,90,.15);color:#5aba80;margin:4px 10px;border-radius:8px;border:1px solid rgba(58,138,90,.25);border-left:1px solid rgba(58,138,90,.25);justify-content:center;font-weight:600;font-size:12px;padding:8px;}
+    .sb-link.kds-link:hover{background:rgba(58,138,90,.28);color:#7ad4a0;}
+    .sb-footer{padding:10px 16px;border-top:1px solid rgba(200,135,58,.15);font-size:10px;color:#5a3e28;}
+    .main-wrap{margin-left:210px;min-height:100vh;display:flex;flex-direction:column;}
+    .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 22px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(60,30,10,.06);}
+    .topbar-title{font-size:15px;font-weight:700;color:var(--espresso);}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .shop-badge{background:linear-gradient(135deg,#fdf0de,#fae3c0);color:var(--latte);font-size:11px;padding:4px 12px;border-radius:20px;font-weight:600;border:1px solid #e8c890;}
+    .low-stock-badge{background:#fdf0f0;color:var(--red);font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;border:1px solid #f0c0c0;text-decoration:none;display:inline-flex;align-items:center;gap:4px;}
+    .low-stock-badge:hover{background:#fde0e0;color:var(--red);}
+    .dark-toggle{background:none;border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .15s;}
+    .dark-toggle:hover{border-color:var(--gold);color:var(--gold);}
+    .user-info{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+    .btn-logout{font-size:11px;color:var(--muted);text-decoration:none;padding:4px 8px;border-radius:5px;border:1px solid var(--border);transition:all .15s;}
+    .btn-logout:hover{border-color:var(--red);color:var(--red);}
+    .page-body{padding:20px 22px;flex:1;}
+    .card-box{background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 1px 4px rgba(60,30,10,.05);}
+    .card-box-hdr{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to right,#fdf8f2,var(--card));border-radius:10px 10px 0 0;}
+    [data-theme="dark"] .card-box-hdr{background:linear-gradient(to right,rgba(200,135,58,.05),var(--card));}
+    .card-box-title{font-size:13px;font-weight:700;color:var(--espresso);}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(60,30,10,.05);position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light));opacity:.5;}
+    .stat-val{font-size:24px;font-weight:800;line-height:1;color:var(--espresso);}
+    .stat-lbl{font-size:11px;color:var(--muted);margin-top:5px;}
+    .tbl{width:100%;border-collapse:collapse;}
+    .tbl th{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--border);background:rgba(253,248,242,.8);text-align:left;}
+    [data-theme="dark"] .tbl th{background:rgba(200,135,58,.05);}
+    .tbl td{padding:11px 14px;border-bottom:1px solid rgba(232,217,197,.5);font-size:13px;}
+    .tbl tr:last-child td{border-bottom:none;}
+    .tbl tr:hover td{background:rgba(200,135,58,.04);}
+    .badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;display:inline-block;}
+    .badge-blue{background:#e8f0fb;color:#2e5ea8;} .badge-green{background:#e8f5ee;color:#3a7d5a;}
+    .badge-red{background:#fdeaea;color:#b83030;} .badge-yellow{background:#fdf5e0;color:#a06820;}
+    .badge-gray{background:#f0ebe4;color:#7a6050;} .badge-indigo{background:#eeeafb;color:#5546a8;}
+    .badge-purple{background:#f5eafb;color:#7a34a8;}
+    .btn-p{background:linear-gradient(135deg,var(--gold),#a86830);color:#fff;border:none;padding:8px 16px;border-radius:7px;font-family:'Sarabun',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .15s;box-shadow:0 2px 6px rgba(180,100,30,.2);}
+    .btn-p:hover{background:linear-gradient(135deg,#d49040,#b87830);color:#fff;transform:translateY(-1px);}
+    .btn-s{background:var(--card);color:var(--text);border:1px solid var(--border);padding:8px 16px;border-radius:7px;font-family:'Sarabun',sans-serif;font-size:13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .15s;}
+    .btn-s:hover{background:rgba(200,135,58,.06);color:var(--text);border-color:#d4b890;}
+    .btn-g{background:linear-gradient(135deg,var(--green),#2e6048);color:#fff;border:none;padding:8px 16px;border-radius:7px;font-size:13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .15s;}
+    .btn-g:hover{color:#fff;filter:brightness(1.1);}
+    .btn-sm{padding:5px 11px;font-size:12px;}
+    .lbl{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.5px;}
+    .inp{width:100%;border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-family:'Sarabun',sans-serif;font-size:13px;color:var(--text);background:var(--card);outline:none;transition:border-color .15s,box-shadow .15s;}
+    .inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,135,58,.1);}
+    .inp::placeholder{color:#baa890;}
+    .fs{background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;}
+    .fs-hdr{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;border-radius:10px 10px 0 0;}
+    .fs-icon{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#fdf0de,#f5e0c0);display:flex;align-items:center;justify-content:center;font-size:14px;border:1px solid #e8c890;}
+    .fs-title{font-size:13px;font-weight:700;color:var(--espresso);}
+    .fs-body{padding:18px;}
+    .alert-ok{background:linear-gradient(135deg,#edf7f1,#d8f0e4);border:1px solid #a8dcc0;color:#2a6044;padding:11px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;}
+    .alert-err{background:linear-gradient(135deg,#fdf0f0,#fde0e0);border:1px solid #f0b0b0;color:#8a2020;padding:11px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;}
+    .ftab{display:flex;gap:2px;flex-wrap:wrap;}
+    .ftab a{padding:7px 13px;font-size:13px;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;transition:all .15s;}
+    .ftab a:hover{color:var(--gold);}
+    .ftab a.act{color:var(--gold);border-bottom-color:var(--gold);font-weight:700;}
+    .ni{border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:13px;width:70px;text-align:right;outline:none;font-family:'Sarabun',sans-serif;background:var(--card);color:var(--text);}
+    .ni:focus{border-color:var(--gold);}
+    /* TOAST */
+    #toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9000;display:flex;flex-direction:column;gap:8px;}
+    .toast-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:13px;box-shadow:0 4px 20px rgba(60,30,10,.15);display:flex;align-items:center;gap:10px;min-width:240px;animation:slideIn .25s ease;border-left:4px solid var(--gold);}
+    .toast-item.toast-err{border-left-color:var(--red);}
+    .toast-item.toast-ok{border-left-color:var(--green);}
+    @keyframes slideIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sb-logo">
+    <h1><span class="logo-dot"></span>Lumè Café</h1>
+    <small>Management System</small>
+  </div>
+  <nav class="sb-nav">
+    <a href="{% url 'pos' %}" class="sb-link pos-link">☕ หน้าเคาท์เตอร์ POS</a>
+    <a href="{% url 'kds' %}" class="sb-link kds-link">👨‍🍳 Kitchen Display</a>
+    <div class="sb-group">รายงาน</div>
+    <a href="{% url 'dashboard' %}" class="sb-link {% block n_dash %}{% endblock %}"><span class="sb-icon">📊</span>ภาพรวม</a>
+    <a href="{% url 'report_sales' %}" class="sb-link {% block n_rep %}{% endblock %}"><span class="sb-icon">📈</span>ยอดขาย</a>
+    <a href="{% url 'report_profit' %}" class="sb-link {% block n_profit %}{% endblock %}"><span class="sb-icon">💰</span>กำไร-ขาดทุน</a>
+    <div class="sb-group">รายการขาย</div>
+    <a href="{% url 'sale_list' %}" class="sb-link {% block n_sales %}{% endblock %}"><span class="sb-icon">🧾</span>รายการขาย</a>
+    <a href="{% url 'sale_new' %}" class="sb-link {% block n_sale_new %}{% endblock %}"><span class="sb-icon">✏️</span>สร้างรายการขาย</a>
+    <div class="sb-group">รายการซื้อ</div>
+    <a href="{% url 'purchase_list' %}" class="sb-link {% block n_po %}{% endblock %}"><span class="sb-icon">🛒</span>รายการซื้อ</a>
+    <a href="{% url 'purchase_new' %}" class="sb-link {% block n_po_new %}{% endblock %}"><span class="sb-icon">✏️</span>สร้างรายการซื้อ</a>
+    <div class="sb-group">จัดการ</div>
+    <a href="{% url 'product_list' %}" class="sb-link {% block n_prod %}{% endblock %}"><span class="sb-icon">☕</span>สินค้า/เมนู</a>
+    <a href="{% url 'ingredient_list' %}" class="sb-link {% block n_ing %}{% endblock %}"><span class="sb-icon">🥛</span>วัตถุดิบ</a>
+    <a href="{% url 'customer_list' %}" class="sb-link {% block n_cust %}{% endblock %}"><span class="sb-icon">👤</span>ลูกค้า</a>
+    <a href="{% url 'supplier_list' %}" class="sb-link {% block n_supp %}{% endblock %}"><span class="sb-icon">🏭</span>ซัพพลายเออร์</a>
+    <a href="{% url 'employee_list' %}" class="sb-link {% block n_emp %}{% endblock %}"><span class="sb-icon">👨‍💼</span>พนักงาน</a>
+    <div class="sb-group">ระบบ</div>
+    <a href="{% url 'settings' %}" class="sb-link {% block n_settings %}{% endblock %}"><span class="sb-icon">⚙️</span>ตั้งค่าร้าน</a>
+  </nav>
+  <div class="sb-footer">v3.0 · {{ request.user.username }}</div>
+</aside>
+<div class="main-wrap">
+  <div class="topbar">
+    <span class="topbar-title">{% block page_title %}{% endblock %}</span>
+    <div class="topbar-right">
+      {% if low_stock_count %}<a href="{% url 'ingredient_list' %}" class="low-stock-badge">⚠️ สต็อกต่ำ {{ low_stock_count }} รายการ</a>{% endif %}
+      <span class="shop-badge">☕ Lumè Café</span>
+      <button class="dark-toggle" onclick="toggleDark()" id="darkBtn">🌙 Dark</button>
+      <span class="user-info">👤 {{ request.user.username }}</span>
+      <a href="{% url 'logout' %}" class="btn-logout">ออกจากระบบ</a>
+      <a href="/admin/" style="font-size:11px;color:var(--muted);text-decoration:none;">⚙ Admin</a>
+    </div>
+  </div>
+  <div class="page-body">
+    {% if messages %}{% for m in messages %}<div class="alert-{% if m.tags == 'error' %}err{% else %}ok{% endif %}">{{ m }}</div>{% endfor %}{% endif %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+<div id="toast-wrap"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Dark mode
+function toggleDark(){
+  var html=document.getElementById('html-root');
+  var isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'':'dark');
+  localStorage.setItem('theme',isDark?'light':'dark');
+  document.getElementById('darkBtn').textContent=isDark?'🌙 Dark':'☀️ Light';
+}
+(function(){
+  var t=localStorage.getItem('theme');
+  if(t==='dark'){document.getElementById('html-root').setAttribute('data-theme','dark');document.getElementById('darkBtn').textContent='☀️ Light';}
+})();
+// Toast
+function showToast(msg,type){
+  var wrap=document.getElementById('toast-wrap');
+  var el=document.createElement('div');
+  el.className='toast-item toast-'+(type||'ok');
+  el.innerHTML=(type==='err'?'❌ ':'✅ ')+msg;
+  wrap.appendChild(el);
+  setTimeout(function(){el.style.opacity='0';el.style.transform='translateX(60px)';el.style.transition='all .3s';setTimeout(function(){el.remove();},300);},3500);
+}
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
+<!-- DELETE MODAL -->
+<div id="deleteModal" style="display:none;position:fixed;inset:0;background:rgba(20,10,5,.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(2px);">
+  <div style="background:var(--card);border-radius:14px;width:390px;padding:30px;box-shadow:0 24px 60px rgba(60,20,5,.25);border:1px solid var(--border);">
+    <div style="text-align:center;margin-bottom:18px;">
+      <div style="width:54px;height:54px;background:linear-gradient(135deg,#fde8e8,#fcd0d0);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 12px;">🗑️</div>
+      <h3 style="font-size:16px;font-weight:800;color:var(--espresso);margin-bottom:6px;" id="deleteTitle">ยืนยันการลบ</h3>
+      <p style="font-size:13px;color:var(--muted);" id="deleteDesc">คุณต้องการลบรายการนี้ใช่หรือไม่?</p>
+    </div>
+    <div style="background:linear-gradient(135deg,#fdf0f0,#fde4e4);border:1px solid #f0b8b8;border-radius:8px;padding:13px;margin-bottom:18px;">
+      <p style="font-size:12px;color:#b83030;font-weight:700;margin-bottom:4px;">⚠️ ต้องใส่รหัสผ่านเพื่อยืนยันการลบ</p>
+      <p style="font-size:11px;color:#a04040;">การลบข้อมูลไม่สามารถกู้คืนได้</p>
+    </div>
+    <form id="deleteForm" method="POST">
+      <input type="hidden" name="csrfmiddlewaretoken" id="deleteCSRF"/>
+      <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;display:block;">รหัสผ่าน *</label>
+      <input type="password" name="delete_password" id="deletePassInput"
+        style="width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:14px;outline:none;margin-bottom:16px;font-family:'Sarabun',sans-serif;background:var(--card);color:var(--text);"
+        placeholder="กรอกรหัสผ่านเพื่อยืนยัน" autocomplete="off"/>
+      <div style="display:flex;gap:10px;">
+        <button type="button" onclick="closeDeleteModal()"
+          style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--muted);font-family:'Sarabun',sans-serif;font-size:13px;cursor:pointer;">ยกเลิก</button>
+        <button type="submit"
+          style="flex:1;padding:10px;border:none;border-radius:8px;background:linear-gradient(135deg,#c83030,#a02020);color:#fff;font-family:'Sarabun',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🗑️ ยืนยันลบ</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+const CSRF_TOKEN='{{ csrf_token }}';
+function openDeleteModal(url,title,desc){
+  document.getElementById('deleteTitle').textContent=title||'ยืนยันการลบ';
+  document.getElementById('deleteDesc').textContent=desc||'คุณต้องการลบรายการนี้ใช่หรือไม่?';
+  document.getElementById('deleteForm').action=url;
+  document.getElementById('deleteCSRF').value=CSRF_TOKEN;
+  document.getElementById('deletePassInput').value='';
+  document.getElementById('deleteModal').style.display='flex';
+  setTimeout(()=>document.getElementById('deletePassInput').focus(),100);
+}
+function closeDeleteModal(){document.getElementById('deleteModal').style.display='none';}
+document.getElementById('deleteModal').addEventListener('click',function(e){if(e.target===this)closeDeleteModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDeleteModal();});
+</script>

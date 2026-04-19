@@ -1,0 +1,87 @@
+{% extends 'cafe/base.html' %}
+{% block title %}รายงานกำไร-ขาดทุน{% endblock %}
+{% block n_rep %}active{% endblock %}
+{% block page_title %}รายงานกำไร-ขาดทุน{% endblock %}
+{% block extra_css %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>{% endblock %}
+{% block content %}
+
+<div class="card-box mb-3">
+  <div class="card-box-hdr"><span class="card-box-title">🔍 กรองช่วงเวลา</span></div>
+  <div style="padding:14px">
+    <form method="GET" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+      <div><label class="lbl">จากวันที่</label><input type="date" name="from" value="{{ date_from }}" class="inp" style="width:160px"/></div>
+      <div><label class="lbl">ถึงวันที่</label><input type="date" name="to" value="{{ date_to }}" class="inp" style="width:160px"/></div>
+      <button type="submit" class="btn-p">ดูรายงาน</button>
+      <a href="?from={{ date_from }}&to={{ date_to }}&export=csv" class="btn-s" style="text-decoration:none">📥 Export CSV</a>
+    </form>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div class="stat-val" style="color:#c8873a">฿{{ total_revenue|floatformat:0 }}</div><div class="stat-lbl">รายรับรวม · {{ total_orders }} ออเดอร์</div></div>
+        <div style="font-size:2rem">💰</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div class="stat-val" style="color:#b83030">฿{{ total_cost|floatformat:0 }}</div><div class="stat-lbl">ต้นทุนรวม</div></div>
+        <div style="font-size:2rem">📦</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="stat-val" style="color:{% if total_profit >= 0 %}#3a7d5a{% else %}#b83030{% endif %}">฿{{ total_profit|floatformat:0 }}</div>
+          <div class="stat-lbl">กำไรสุทธิ</div>
+        </div>
+        <div style="font-size:2rem">{% if total_profit >= 0 %}📈{% else %}📉{% endif %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div class="stat-val" style="color:#5546a8">{{ margin|floatformat:1 }}%</div><div class="stat-lbl">Gross Margin</div></div>
+        <div style="font-size:2rem">🎯</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card-box">
+  <div class="card-box-hdr"><span class="card-box-title">🏆 กำไรแยกตามสินค้า</span></div>
+  <div style="overflow-x:auto"><table class="tbl">
+    <thead><tr><th>#</th><th>สินค้า</th><th>จำนวนที่ขาย</th><th>รายรับ</th><th>ต้นทุน</th><th>กำไร</th><th>Margin</th><th>แถบ</th></tr></thead>
+    <tbody>
+    {% for p in products %}
+    <tr>
+      <td style="color:#8a7060;font-size:12px">{{ forloop.counter }}</td>
+      <td style="font-weight:500">{{ p.name }}</td>
+      <td style="color:#8a7060">{{ p.qty|floatformat:0 }}</td>
+      <td style="color:#c8873a;font-weight:500">฿{{ p.revenue|floatformat:0 }}</td>
+      <td style="color:#8a7060">฿{{ p.cost|floatformat:0 }}</td>
+      <td style="font-weight:700;color:{% if p.profit >= 0 %}#3a7d5a{% else %}#b83030{% endif %}">฿{{ p.profit|floatformat:0 }}</td>
+      <td>
+        <span class="badge {% if p.margin >= 30 %}badge-green{% elif p.margin >= 15 %}badge-yellow{% else %}badge-red{% endif %}">
+          {{ p.margin|floatformat:1 }}%
+        </span>
+      </td>
+      <td style="width:120px">
+        <div style="background:#f0e8da;border-radius:4px;height:8px;overflow:hidden">
+          <div style="background:{% if p.profit >= 0 %}#c8873a{% else %}#b83030{% endif %};height:100%;width:{% if total_profit > 0 %}{% widthratio p.profit total_profit 100 %}{% else %}0{% endif %}%;transition:width .3s"></div>
+        </div>
+      </td>
+    </tr>
+    {% empty %}<tr><td colspan="8" style="text-align:center;padding:28px;color:#94a3b8">ไม่มีข้อมูลในช่วงนี้</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+
+{% endblock %}

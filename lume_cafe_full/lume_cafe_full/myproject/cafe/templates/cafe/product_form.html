@@ -1,0 +1,28 @@
+{% extends 'cafe/base.html' %}
+{% block title %}{% if action == 'new' %}เพิ่มสินค้า{% else %}แก้ไขสินค้า{% endif %}{% endblock %}
+{% block n_prod %}active{% endblock %}
+{% block page_title %}{% if action == 'new' %}เพิ่มสินค้าใหม่{% else %}แก้ไขสินค้า{% endif %}{% endblock %}
+{% block content %}
+<div style="margin-bottom:12px"><a href="{% url 'product_list' %}" style="font-size:12px;color:#c8873a;text-decoration:none">← สินค้า</a></div>
+<div class="fs" style="max-width:660px"><div class="fs-hdr"><div class="fs-icon">☕</div><span class="fs-title">ข้อมูลสินค้า</span></div>
+<div class="fs-body"><form method="POST">{% csrf_token %}
+  <div class="row g-3 mb-3">
+    <div class="col-md-3"><label class="lbl">รหัส *</label><input type="text" name="code" class="inp" value="{{ product.code|default:'' }}" {% if action != 'new' %}readonly{% endif %} required/></div>
+    <div class="col-md-6"><label class="lbl">ชื่อสินค้า *</label><input type="text" name="name" class="inp" value="{{ product.name|default:'' }}" required/></div>
+    <div class="col-md-3"><label class="lbl">หมวดหมู่</label>
+      <select name="category" class="inp"><option value="coffee" {% if product.category == 'coffee' %}selected{% endif %}>Coffee</option><option value="tea" {% if product.category == 'tea' %}selected{% endif %}>Tea</option><option value="smoothie" {% if product.category == 'smoothie' %}selected{% endif %}>Smoothie</option><option value="bakery" {% if product.category == 'bakery' %}selected{% endif %}>Bakery</option><option value="ingredient" {% if product.category == 'ingredient' %}selected{% endif %}>วัตถุดิบ</option></select>
+    </div>
+  </div>
+  <div class="row g-3 mb-3">
+    <div class="col-md-3"><label class="lbl">ราคาขาย ฿ *</label><input type="number" name="sale_price" class="inp" value="{{ product.sale_price|default:0 }}" step="0.01" required/></div>
+    <div class="col-md-3"><label class="lbl">ต้นทุน ฿</label><input type="number" name="cost_price" class="inp" value="{{ product.cost_price|default:0 }}" step="0.01"/></div>
+    <div class="col-md-3"><label class="lbl">สต็อก</label><input type="number" name="stock_qty" class="inp" value="{{ product.stock_qty|default:0 }}" step="0.01"/></div>
+    <div class="col-md-3"><label class="lbl">ขั้นต่ำ</label><input type="number" name="min_stock" class="inp" value="{{ product.min_stock|default:0 }}" step="0.01"/></div>
+  </div>
+  <div class="row g-3 mb-3"><div class="col-md-3"><label class="lbl">หน่วย</label><input type="text" name="unit" class="inp" value="{{ product.unit|default:'แก้ว' }}"/></div></div>
+  <div class="mb-3"><label class="lbl">URL รูปภาพ</label><input type="url" name="image_url" class="inp" value="{{ product.image_url|default:'' }}"/></div>
+  <div class="mb-3"><label class="lbl">รายละเอียด</label><textarea name="description" class="inp" rows="2">{{ product.description|default:'' }}</textarea></div>
+  <div class="mb-4" style="display:flex;align-items:center;gap:8px"><input type="checkbox" name="is_available" {% if product.is_available or action == 'new' %}checked{% endif %} style="width:16px;height:16px;accent-color:#c8873a"/><label style="font-size:13px;cursor:pointer">พร้อมขาย</label></div>
+  <div style="display:flex;gap:10px"><button type="submit" class="btn-p">บันทึก</button><a href="{% url 'product_list' %}" class="btn-s" style="text-decoration:none">ยกเลิก</a></div>
+</form></div></div>
+{% endblock %}

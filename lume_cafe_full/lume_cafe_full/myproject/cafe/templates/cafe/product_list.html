@@ -1,0 +1,36 @@
+{% extends 'cafe/base.html' %}
+{% block title %}สินค้า/เมนู{% endblock %}{% block n_prod %}active{% endblock %}{% block page_title %}สินค้า/เมนู{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+  <div class="ftab">
+    <a href="?cat=" class="{% if not cat %}act{% endif %}">ทั้งหมด</a>
+    <a href="?cat=coffee" class="{% if cat == 'coffee' %}act{% endif %}">☕ Coffee</a>
+    <a href="?cat=tea" class="{% if cat == 'tea' %}act{% endif %}">🍵 Tea</a>
+    <a href="?cat=smoothie" class="{% if cat == 'smoothie' %}act{% endif %}">🥤 Smoothie</a>
+    <a href="?cat=bakery" class="{% if cat == 'bakery' %}act{% endif %}">🥐 Bakery</a>
+    <a href="?cat=ingredient" class="{% if cat == 'ingredient' %}act{% endif %}">🥛 วัตถุดิบ</a>
+  </div>
+  <a href="{% url 'product_new' %}" class="btn-p" style="text-decoration:none">+ เพิ่มสินค้า</a>
+</div>
+<div class="card-box"><div style="overflow-x:auto"><table class="tbl">
+  <thead><tr><th>รหัส</th><th>ชื่อ</th><th>หมวด</th><th>ราคาขาย</th><th>ต้นทุน</th><th>กำไร</th><th>สต็อก</th><th>หน่วย</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+  <tbody>{% for p in products %}<tr>
+    <td style="color:#64748b;font-size:12px">{{ p.code }}</td>
+    <td style="font-weight:500">{{ p.name }}</td>
+    <td><span class="badge badge-indigo">{{ p.get_category_display }}</span></td>
+    <td style="color:#c8873a;font-weight:600">฿{{ p.sale_price|floatformat:2 }}</td>
+    <td style="color:#64748b">฿{{ p.cost_price|floatformat:2 }}</td>
+    <td style="color:#3a7d5a;font-weight:500">฿{{ p.profit|floatformat:2 }}</td>
+    <td><span style="font-weight:600;color:{% if p.is_low %}#dc2626{% else %}#16a34a{% endif %}">{{ p.stock_qty|floatformat:0 }}</span>{% if p.is_low %} <span class="badge badge-red" style="font-size:10px">ต่ำ</span>{% endif %}</td>
+    <td style="color:#64748b">{{ p.unit }}</td>
+    <td>{% if p.is_available %}<span class="badge badge-green">พร้อมขาย</span>{% else %}<span class="badge badge-gray">หยุด</span>{% endif %}</td>
+    <td style="white-space:nowrap">
+      <a href="{% url 'product_edit' p.pk %}" class="btn-s btn-sm" style="text-decoration:none;margin-right:4px">แก้ไข</a>
+      <button onclick="openDeleteModal('{% url 'product_delete' p.pk %}','ลบสินค้า','ลบ &quot;{{ p.name }}&quot; ออกจากระบบ?')"
+        style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;border-radius:4px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit;">
+        🗑 ลบ
+      </button>
+    </td>
+  </tr>{% empty %}<tr><td colspan="10" style="text-align:center;padding:28px;color:#94a3b8">ยังไม่มีสินค้า</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

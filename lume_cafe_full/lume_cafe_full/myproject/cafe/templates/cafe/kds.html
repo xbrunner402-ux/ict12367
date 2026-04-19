@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kitchen Display — Lumè Café</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#1a1208;--card:#2a1f14;--card2:#231a0f;--border:#3d2e1a;--gold:#c8873a;--gold-l:#f5c878;--text:#f0e8da;--muted:#8a7050;--green:#3a8a5a;--red:#c04040;--yellow:#d4960a;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    .kds-top{background:var(--card);border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;}
+    .kds-top h1{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-l);letter-spacing:1px;}
+    .kds-info{display:flex;align-items:center;gap:16px;}
+    .kds-clock{font-size:1.3rem;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums;}
+    .btn-back{background:rgba(200,135,58,.15);color:var(--gold);border:1px solid rgba(200,135,58,.3);padding:6px 14px;border-radius:6px;font-size:12px;text-decoration:none;font-weight:600;}
+    .kds-body{padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;align-content:start;}
+    .kds-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:transform .15s;}
+    .kds-card:hover{transform:translateY(-2px);}
+    .kds-card.urgent{border-color:var(--red);box-shadow:0 0 0 1px var(--red);}
+    .kds-card.done-anim{opacity:0;transform:scale(.95);transition:all .3s;}
+    .kds-hdr{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--card2);}
+    .kds-so{font-size:13px;font-weight:700;color:var(--gold-l);}
+    .kds-time{font-size:11px;padding:3px 8px;border-radius:10px;font-weight:600;}
+    .kds-time.ok{background:rgba(58,138,90,.2);color:#5aba80;}
+    .kds-time.warn{background:rgba(212,150,10,.2);color:#e0b020;}
+    .kds-time.late{background:rgba(192,64,64,.2);color:#e06060;}
+    .kds-items{padding:12px 14px;}
+    .kds-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+    .kds-item:last-child{border-bottom:none;}
+    .kds-qty{background:var(--gold);color:#fff;font-size:11px;font-weight:800;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .kds-item-name{flex:1;font-size:13px;font-weight:500;}
+    .kds-done-btn{width:100%;padding:11px;background:linear-gradient(135deg,var(--green),#2e6848);color:#fff;border:none;font-family:'Sarabun',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px;}
+    .kds-done-btn:hover{background:linear-gradient(135deg,#46a06a,#3a7858);}
+    .empty-state{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--muted);}
+    .empty-icon{font-size:3rem;margin-bottom:16px;opacity:.4;}
+    .kds-note{font-size:11px;color:var(--muted);padding:6px 14px 10px;font-style:italic;}
+    .badge-count{background:var(--red);color:#fff;font-size:11px;font-weight:700;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-left:6px;}
+  </style>
+</head>
+<body>
+<div class="kds-top">
+  <h1>👨‍🍳 Kitchen Display — Lumè Café</h1>
+  <div class="kds-info">
+    <span class="kds-clock" id="clock">--:--:--</span>
+    <a href="/" class="btn-back">← หลังบ้าน</a>
+  </div>
+</div>
+<div class="kds-body" id="kdsBody">
+  <div class="empty-state"><div class="empty-icon">✅</div><div style="font-size:15px;font-weight:600;color:#5aba80">ไม่มีออเดอร์รอทำ</div><div style="font-size:13px;margin-top:6px">ออเดอร์ใหม่จะปรากฏที่นี่อัตโนมัติ</div></div>
+</div>
+<script>
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('th-TH');}
+setInterval(updateClock,1000);updateClock();
+
+function timeSince(isoStr){
+  var diff=Math.floor((Date.now()-new Date(isoStr))/60000);
+  return diff<1?'เพิ่งมา':diff+'m';
+}
+function timeClass(isoStr){
+  var diff=Math.floor((Date.now()-new Date(isoStr))/60000);
+  if(diff<5)return'ok';if(diff<10)return'warn';return'late';
+}
+
+function markDone(pk){
+  fetch('/kds/done/'+pk+'/',{method:'POST',headers:{'X-CSRFToken':getCsrf()}})
+    .then(r=>r.json()).then(d=>{if(d.ok){var el=document.getElementById('kds-'+pk);if(el){el.classList.add('done-anim');setTimeout(()=>loadOrders(),400);}}});
+}
+
+function getCsrf(){var c=document.cookie.split(';').find(c=>c.trim().startsWith('csrftoken='));return c?c.split('=')[1]:'';}
+
+
+var prevCount = 0;
+function playBeep(){
+  try{
+    var ctx = new (window.AudioContext||window.webkitAudioContext)();
+    var o = ctx.createOscillator(); var g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = 880; g.gain.value = 0.3;
+    o.start(); o.stop(ctx.currentTime + 0.15);
+    setTimeout(function(){o2=ctx.createOscillator();o2.connect(g);o2.frequency.value=1100;o2.start();o2.stop(ctx.currentTime+0.15);},200);
+  }catch(e){}
+}
+function loadOrders(){
+  fetch('/kds/orders/')
+    .then(r=>r.json())
+    .then(data=>{
+      var body=document.getElementById('kdsBody');
+      var count = data.orders.length;
+      // Update tab title
+      document.title = count > 0 ? '('+count+') Kitchen Display — Lumè Café' : 'Kitchen Display — Lumè Café';
+      // Play sound if new orders arrived
+      if(count > prevCount && prevCount >= 0) playBeep();
+      prevCount = count;
+      if(!count){
+        body.innerHTML='<div class="empty-state"><div class="empty-icon">✅</div><div style="font-size:15px;font-weight:600;color:#5aba80">ไม่มีออเดอร์รอทำ</div><div style="font-size:13px;margin-top:6px">ออเดอร์ใหม่จะปรากฏที่นี่อัตโนมัติ</div></div>';
+        return;
+      }
+      var html='';
+      data.orders.forEach(function(o){
+        var tc=timeClass(o.created_at);
+        html+='<div class="kds-card'+(tc==='late'?' urgent':'')+'" id="kds-'+o.pk+'">';
+        html+='<div class="kds-hdr"><span class="kds-so">'+o.so_number+'</span><span class="kds-time '+tc+'">⏱ '+timeSince(o.created_at)+'</span></div>';
+        html+='<div class="kds-items">';
+        o.items.forEach(function(i){html+='<div class="kds-item"><span class="kds-qty">'+i.qty+'</span><span class="kds-item-name">'+i.name+'</span></div>';});
+        html+='</div>';
+        if(o.note)html+='<div class="kds-note">📝 '+o.note+'</div>';
+        html+='<button class="kds-done-btn" onclick="markDone('+o.pk+')">✓ ทำเสร็จแล้ว</button>';
+        html+='</div>';
+      });
+      body.innerHTML=html;
+    });
+}
+loadOrders();
+setInterval(loadOrders,8000);
+</script>
+</body>
+</html>

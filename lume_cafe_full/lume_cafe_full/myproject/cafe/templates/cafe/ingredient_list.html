@@ -1,0 +1,49 @@
+{% extends 'cafe/base.html' %}
+{% block title %}วัตถุดิบ{% endblock %}{% block n_ing %}active{% endblock %}{% block page_title %}จัดการวัตถุดิบ{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <span style="font-size:13px;font-weight:600">วัตถุดิบทั้งหมด</span>
+      <a href="{% url 'ingredient_new' %}" class="btn-p" style="text-decoration:none">+ เพิ่มวัตถุดิบ</a>
+    </div>
+    <div class="card-box mb-3"><div style="overflow-x:auto"><table class="tbl">
+      <thead><tr><th>รหัส</th><th>ชื่อ</th><th>หน่วย</th><th>คงเหลือ</th><th>ขั้นต่ำ</th><th>ราคา/หน่วย</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+      <tbody>{% for i in ingredients %}<tr>
+        <td style="font-size:12px;color:#64748b">{{ i.code }}</td>
+        <td style="font-weight:500">{{ i.name }}</td>
+        <td style="color:#64748b">{{ i.get_unit_display }}</td>
+        <td><span style="font-weight:600;color:{% if i.is_low %}#dc2626{% else %}#16a34a{% endif %}">{{ i.stock_qty|floatformat:2 }}</span></td>
+        <td style="color:#64748b">{{ i.min_stock|floatformat:2 }}</td>
+        <td style="color:#64748b">฿{{ i.cost_per_unit|floatformat:2 }}</td>
+        <td>{% if i.is_low %}<span class="badge badge-red">⚠️ ต่ำ</span>{% else %}<span class="badge badge-green">✅ ปกติ</span>{% endif %}</td>
+        <td style="white-space:nowrap"><a href="{% url 'ingredient_edit' i.pk %}" class="btn-s btn-sm" style="text-decoration:none;margin-right:4px">✏️ แก้ไข</a><button onclick="openDeleteModal('{% url 'ingredient_delete' i.pk %}','ลบวัตถุดิบ','ลบ &quot;{{ i.name }}&quot; ออกจากระบบ?')"
+          style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;border-radius:4px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:inherit;">🗑 ลบ</button></td>
+      </tr>{% empty %}<tr><td colspan="8" style="text-align:center;padding:28px;color:#94a3b8">ยังไม่มีวัตถุดิบ</td></tr>{% endfor %}</tbody>
+    </table></div></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card-box mb-3"><div class="card-box-hdr"><span class="card-box-title">🔄 บันทึกเคลื่อนไหวสต็อก</span></div>
+      <div style="padding:14px"><form method="POST" action="{% url 'stock_move' %}">{% csrf_token %}
+        <label class="lbl">วัตถุดิบ *</label>
+        <select name="ingredient" class="inp mb-2" required><option value="">-- เลือก --</option>{% for i in ingredients %}<option value="{{ i.pk }}">{{ i.name }} ({{ i.stock_qty|floatformat:1 }} {{ i.unit }})</option>{% endfor %}</select>
+        <label class="lbl">ประเภท *</label>
+        <select name="move_type" class="inp mb-2"><option value="in">📥 รับเข้า</option><option value="out">📤 เบิกใช้</option><option value="waste">🗑 ของเสีย</option><option value="adjust">⚖ ปรับยอด</option></select>
+        <label class="lbl">จำนวน *</label>
+        <input type="number" name="quantity" class="inp mb-2" step="0.01" min="0" required/>
+        <label class="lbl">หมายเหตุ</label>
+        <input type="text" name="note" class="inp mb-3" placeholder="เช่น รับจากซัพพลายเออร์..."/>
+        <button type="submit" class="btn-p" style="width:100%">บันทึก</button>
+      </form></div>
+    </div>
+    <div class="card-box"><div class="card-box-hdr"><span class="card-box-title">ประวัติล่าสุด</span></div>
+      {% for m in movements %}
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #f1f5f9;font-size:12px;">
+        <div><div style="font-weight:500">{{ m.ingredient.name }}</div><div style="color:#64748b">{{ m.get_move_type_display }} · {{ m.created_at|date:"d/m H:i" }}</div></div>
+        <div style="font-weight:600;color:{% if m.move_type == 'in' %}#16a34a{% else %}#dc2626{% endif %}">{{ m.quantity }}</div>
+      </div>
+      {% empty %}<div style="padding:20px;text-align:center;color:#94a3b8;font-size:13px">ยังไม่มีประวัติ</div>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

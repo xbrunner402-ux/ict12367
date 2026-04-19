@@ -1,0 +1,11 @@
+{% extends 'cafe/base.html' %}
+{% block title %}เพิ่มซัพพลายเออร์{% endblock %}{% block n_supp %}active{% endblock %}{% block page_title %}เพิ่มซัพพลายเออร์{% endblock %}
+{% block content %}
+<div class="fs" style="max-width:540px"><div class="fs-hdr"><div class="fs-icon">🏭</div><span class="fs-title">ข้อมูลซัพพลายเออร์</span></div>
+<div class="fs-body"><form method="POST">{% csrf_token %}
+  <div class="mb-3"><label class="lbl">ชื่อ *</label><input type="text" name="name" class="inp" required/></div>
+  <div class="row g-3 mb-3"><div class="col-md-6"><label class="lbl">เบอร์โทร</label><input type="text" name="phone" class="inp"/></div><div class="col-md-6"><label class="lbl">อีเมล</label><input type="email" name="email" class="inp"/></div></div>
+  <div class="mb-4"><label class="lbl">ที่อยู่</label><textarea name="address" class="inp" rows="2"></textarea></div>
+  <div style="display:flex;gap:10px"><button type="submit" class="btn-p">บันทึก</button><a href="{% url 'supplier_list' %}" class="btn-s" style="text-decoration:none">ยกเลิก</a></div>
+</form></div></div>
+{% endblock %}

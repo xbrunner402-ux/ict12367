@@ -1,0 +1,529 @@
+[
+  {
+    "model": "cafe.supplier",
+    "pk": 1,
+    "fields": {
+      "code": "SUP001",
+      "name": "ดอยแม่สลอง Coffee Farm",
+      "phone": "053-111-1111",
+      "email": "doi@coffee.th",
+      "address": "123 ถ.ดอยแม่สลอง อ.แม่ฟ้าหลวง จ.เชียงราย",
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.supplier",
+    "pk": 2,
+    "fields": {
+      "code": "SUP002",
+      "name": "บริษัท ไทยนม จำกัด",
+      "phone": "02-222-2222",
+      "email": "milk@thai.th",
+      "address": "456 ถ.วิภาวดี กรุงเทพ",
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.supplier",
+    "pk": 3,
+    "fields": {
+      "code": "SUP003",
+      "name": "ห้างหุ้นส่วน วัตถุดิบเบเกอรี่",
+      "phone": "053-333-3333",
+      "email": "bakery@supply.th",
+      "address": "789 ถ.นิมมานเหมินท์ เชียงใหม่",
+      "created_at": "2024-01-15T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.ingredient",
+    "pk": 1,
+    "fields": {
+      "code": "ING001",
+      "name": "เมล็ดกาแฟอาราบิก้า",
+      "unit": "kg",
+      "stock_qty": "10.00",
+      "min_stock": "2.00",
+      "cost_per_unit": "450.00",
+      "supplier": 1
+    }
+  },
+  {
+    "model": "cafe.ingredient",
+    "pk": 2,
+    "fields": {
+      "code": "ING002",
+      "name": "นมสด",
+      "unit": "l",
+      "stock_qty": "20.00",
+      "min_stock": "5.00",
+      "cost_per_unit": "45.00",
+      "supplier": 2
+    }
+  },
+  {
+    "model": "cafe.ingredient",
+    "pk": 3,
+    "fields": {
+      "code": "ING003",
+      "name": "น้ำตาลทราย",
+      "unit": "kg",
+      "stock_qty": "5.00",
+      "min_stock": "1.00",
+      "cost_per_unit": "25.00",
+      "supplier": null
+    }
+  },
+  {
+    "model": "cafe.ingredient",
+    "pk": 4,
+    "fields": {
+      "code": "ING004",
+      "name": "ผงมัทฉะ",
+      "unit": "g",
+      "stock_qty": "500.00",
+      "min_stock": "100.00",
+      "cost_per_unit": "2.50",
+      "supplier": null
+    }
+  },
+  {
+    "model": "cafe.ingredient",
+    "pk": 5,
+    "fields": {
+      "code": "ING005",
+      "name": "แป้งสาลี",
+      "unit": "kg",
+      "stock_qty": "8.00",
+      "min_stock": "2.00",
+      "cost_per_unit": "35.00",
+      "supplier": 3
+    }
+  },
+  {
+    "model": "cafe.ingredient",
+    "pk": 6,
+    "fields": {
+      "code": "ING006",
+      "name": "เนยสด",
+      "unit": "kg",
+      "stock_qty": "3.00",
+      "min_stock": "1.00",
+      "cost_per_unit": "180.00",
+      "supplier": 2
+    }
+  },
+  {
+    "model": "cafe.ingredient",
+    "pk": 7,
+    "fields": {
+      "code": "ING007",
+      "name": "ช็อกโกแลต",
+      "unit": "kg",
+      "stock_qty": "2.00",
+      "min_stock": "0.50",
+      "cost_per_unit": "320.00",
+      "supplier": 3
+    }
+  },
+  {
+    "model": "cafe.ingredient",
+    "pk": 8,
+    "fields": {
+      "code": "ING008",
+      "name": "ครีมสด",
+      "unit": "l",
+      "stock_qty": "1.50",
+      "min_stock": "1.00",
+      "cost_per_unit": "95.00",
+      "supplier": 2
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 1,
+    "fields": {
+      "code": "PRD001",
+      "name": "Lumè Signature Latte",
+      "category": "coffee",
+      "description": "กาแฟลาเต้สูตรพิเศษ กลิ่นวนิลาและคาราเมลอ่อนๆ",
+      "sale_price": "120.00",
+      "cost_price": "40.00",
+      "stock_qty": "999.00",
+      "min_stock": "0.00",
+      "unit": "แก้ว",
+      "image_url": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 2,
+    "fields": {
+      "code": "PRD002",
+      "name": "Double Espresso",
+      "category": "coffee",
+      "description": "เอสเปรสโซ่เข้มข้น คัดจากดอยแม่สลอง",
+      "sale_price": "90.00",
+      "cost_price": "25.00",
+      "stock_qty": "999.00",
+      "min_stock": "0.00",
+      "unit": "แก้ว",
+      "image_url": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 3,
+    "fields": {
+      "code": "PRD003",
+      "name": "Cappuccino",
+      "category": "coffee",
+      "description": "คาปูชิโนคลาสสิก โฟมนมนุ่มละมุน",
+      "sale_price": "105.00",
+      "cost_price": "35.00",
+      "stock_qty": "999.00",
+      "min_stock": "0.00",
+      "unit": "แก้ว",
+      "image_url": "https://images.unsplash.com/photo-1534778101976-62847782c213?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 4,
+    "fields": {
+      "code": "PRD004",
+      "name": "Cold Brew",
+      "category": "coffee",
+      "description": "โคลด์บรูว์แช่เย็น 18 ชั่วโมง",
+      "sale_price": "115.00",
+      "cost_price": "30.00",
+      "stock_qty": "999.00",
+      "min_stock": "0.00",
+      "unit": "แก้ว",
+      "image_url": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 5,
+    "fields": {
+      "code": "PRD005",
+      "name": "Caramel Macchiato",
+      "category": "coffee",
+      "description": "กาแฟคาราเมล มาเกียโต",
+      "sale_price": "125.00",
+      "cost_price": "42.00",
+      "stock_qty": "999.00",
+      "min_stock": "0.00",
+      "unit": "แก้ว",
+      "image_url": "https://images.unsplash.com/photo-1485808191679-5f86510bd9d4?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 6,
+    "fields": {
+      "code": "PRD006",
+      "name": "Iced Matcha Latte",
+      "category": "tea",
+      "description": "มัทฉะเกรดพรีเมียมจากญี่ปุ่น",
+      "sale_price": "130.00",
+      "cost_price": "45.00",
+      "stock_qty": "999.00",
+      "min_stock": "0.00",
+      "unit": "แก้ว",
+      "image_url": "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 7,
+    "fields": {
+      "code": "PRD007",
+      "name": "Earl Grey Latte",
+      "category": "tea",
+      "description": "เอิร์ลเกรย์ กลิ่นเบอร์กาม็อต",
+      "sale_price": "100.00",
+      "cost_price": "32.00",
+      "stock_qty": "999.00",
+      "min_stock": "0.00",
+      "unit": "แก้ว",
+      "image_url": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 8,
+    "fields": {
+      "code": "PRD008",
+      "name": "Chamomile Honey Tea",
+      "category": "tea",
+      "description": "ชาคาโมมายล์ ผสมน้ำผึ้งแท้",
+      "sale_price": "95.00",
+      "cost_price": "28.00",
+      "stock_qty": "999.00",
+      "min_stock": "0.00",
+      "unit": "แก้ว",
+      "image_url": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 9,
+    "fields": {
+      "code": "PRD009",
+      "name": "Strawberry Smoothie",
+      "category": "smoothie",
+      "description": "สมูทตี้สตรอว์เบอร์รีสด",
+      "sale_price": "110.00",
+      "cost_price": "38.00",
+      "stock_qty": "999.00",
+      "min_stock": "0.00",
+      "unit": "แก้ว",
+      "image_url": "https://images.unsplash.com/photo-1553530666-ba11a90bb0ae?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 10,
+    "fields": {
+      "code": "PRD010",
+      "name": "Mango Passion Smoothie",
+      "category": "smoothie",
+      "description": "สมูทตี้มะม่วงผสมเสาวรส",
+      "sale_price": "120.00",
+      "cost_price": "42.00",
+      "stock_qty": "50.00",
+      "min_stock": "5.00",
+      "unit": "แก้ว",
+      "image_url": "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 11,
+    "fields": {
+      "code": "PRD011",
+      "name": "Butter Croissant",
+      "category": "bakery",
+      "description": "ครัวซองต์เนยสดอบใหม่ทุกเช้า",
+      "sale_price": "85.00",
+      "cost_price": "28.00",
+      "stock_qty": "30.00",
+      "min_stock": "5.00",
+      "unit": "ชิ้น",
+      "image_url": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 12,
+    "fields": {
+      "code": "PRD012",
+      "name": "Chocolate Lava Cake",
+      "category": "bakery",
+      "description": "เค้กช็อกโกแลตลาวา อบสดใหม่",
+      "sale_price": "160.00",
+      "cost_price": "55.00",
+      "stock_qty": "20.00",
+      "min_stock": "5.00",
+      "unit": "ชิ้น",
+      "image_url": "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 13,
+    "fields": {
+      "code": "PRD013",
+      "name": "Banana Walnut Bread",
+      "category": "bakery",
+      "description": "บานาน่าเบรดผสมวอลนัท",
+      "sale_price": "75.00",
+      "cost_price": "22.00",
+      "stock_qty": "25.00",
+      "min_stock": "5.00",
+      "unit": "ชิ้น",
+      "image_url": "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.product",
+    "pk": 14,
+    "fields": {
+      "code": "PRD014",
+      "name": "Blueberry Cheesecake",
+      "category": "bakery",
+      "description": "ชีสเค้กบลูเบอร์รี่ครีมชีสนุ่มละมุน",
+      "sale_price": "145.00",
+      "cost_price": "50.00",
+      "stock_qty": "15.00",
+      "min_stock": "3.00",
+      "unit": "ชิ้น",
+      "image_url": "https://images.unsplash.com/photo-1567171466295-4afa63d45416?w=400&q=80",
+      "is_available": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.employee",
+    "pk": 1,
+    "fields": {
+      "code": "EMP001",
+      "name": "สมชาย ใจดี",
+      "role": "manager",
+      "phone": "081-111-1111",
+      "email": "somchai@lume.cafe",
+      "salary": "35000",
+      "start_date": "2024-01-01",
+      "status": "active"
+    }
+  },
+  {
+    "model": "cafe.employee",
+    "pk": 2,
+    "fields": {
+      "code": "EMP002",
+      "name": "สมหญิง รักงาน",
+      "role": "barista",
+      "phone": "082-222-2222",
+      "email": "somying@lume.cafe",
+      "salary": "18000",
+      "start_date": "2024-01-15",
+      "status": "active"
+    }
+  },
+  {
+    "model": "cafe.employee",
+    "pk": 3,
+    "fields": {
+      "code": "EMP003",
+      "name": "มานะ ขยันทำ",
+      "role": "cashier",
+      "phone": "083-333-3333",
+      "email": "mana@lume.cafe",
+      "salary": "16000",
+      "start_date": "2024-02-01",
+      "status": "active"
+    }
+  },
+  {
+    "model": "cafe.employee",
+    "pk": 4,
+    "fields": {
+      "code": "EMP004",
+      "name": "สุดา เบเกอรี่",
+      "role": "baker",
+      "phone": "084-444-4444",
+      "email": "suda@lume.cafe",
+      "salary": "17000",
+      "start_date": "2024-02-15",
+      "status": "active"
+    }
+  },
+  {
+    "model": "cafe.employee",
+    "pk": 5,
+    "fields": {
+      "code": "EMP005",
+      "name": "ธนา ส่งด่วน",
+      "role": "delivery",
+      "phone": "085-555-5555",
+      "email": "thana@lume.cafe",
+      "salary": "14000",
+      "start_date": "2024-03-01",
+      "status": "active"
+    }
+  },
+  {
+    "model": "cafe.customer",
+    "pk": 1,
+    "fields": {
+      "code": "C0001",
+      "name": "นางสาว อรุณี สว่างใจ",
+      "phone": "090-111-1111",
+      "email": "arunee@email.com",
+      "address": "123/1 ถ.นิมมานเหมินท์ เชียงใหม่",
+      "points": 320,
+      "created_at": "2024-03-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.customer",
+    "pk": 2,
+    "fields": {
+      "code": "C0002",
+      "name": "นาย ธนากร มั่นคง",
+      "phone": "091-222-2222",
+      "email": "thanakorn@email.com",
+      "address": "456 ถ.ห้วยแก้ว เชียงใหม่",
+      "points": 185,
+      "created_at": "2024-03-10T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.customer",
+    "pk": 3,
+    "fields": {
+      "code": "C0003",
+      "name": "นางสาว พิมพ์ใจ ดีงาม",
+      "phone": "092-333-3333",
+      "email": "pimjai@email.com",
+      "address": "789 ถ.เชียงใหม่-ลำพูน",
+      "points": 500,
+      "created_at": "2024-03-15T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.customer",
+    "pk": 4,
+    "fields": {
+      "code": "C0004",
+      "name": "นาย วิชัย ใจกล้า",
+      "phone": "093-444-4444",
+      "email": "wichai@email.com",
+      "address": "101 ถ.ท่าแพ เชียงใหม่",
+      "points": 75,
+      "created_at": "2024-04-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "cafe.customer",
+    "pk": 5,
+    "fields": {
+      "code": "C0005",
+      "name": "นางสาว นภา ฟ้าสวย",
+      "phone": "094-555-5555",
+      "email": "napa@email.com",
+      "address": "202 ถ.วัวลาย เชียงใหม่",
+      "points": 240,
+      "created_at": "2024-04-10T00:00:00Z"
+    }
+  }
+]

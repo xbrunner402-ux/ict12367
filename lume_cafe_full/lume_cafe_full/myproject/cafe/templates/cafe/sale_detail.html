@@ -1,0 +1,44 @@
+{% extends 'cafe/base.html' %}
+{% block title %}{{ order.so_number }}{% endblock %}{% block n_sales %}active{% endblock %}{% block page_title %}{{ order.so_number }}{% endblock %}
+{% block content %}
+<div style="margin-bottom:12px"><a href="{% url 'sale_list' %}" style="font-size:12px;color:#c8873a;text-decoration:none">← รายการขาย</a></div>
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card-box mb-3">
+      <div class="card-box-hdr"><span class="card-box-title">รายการสินค้า</span>
+        {% if order.status == 'completed' %}<span class="badge badge-green">เสร็จสิ้น</span>{% elif order.status == 'confirmed' %}<span class="badge badge-blue">ยืนยัน</span>{% elif order.status == 'draft' %}<span class="badge badge-gray">แบบร่าง</span>{% else %}<span class="badge badge-red">ยกเลิก</span>{% endif %}
+      </div>
+      <table class="tbl"><thead><tr><th>สินค้า</th><th>จำนวน</th><th>ราคา/หน่วย</th><th>ส่วนลด</th><th>รวม</th></tr></thead>
+      <tbody>{% for item in order.items.all %}<tr>
+        <td><div style="font-weight:500">{{ item.product.name }}</div><div style="font-size:11px;color:#94a3b8">{{ item.product.code }}</div></td>
+        <td>{{ item.quantity }} {{ item.product.unit }}</td>
+        <td>฿{{ item.price|floatformat:2 }}</td>
+        <td style="color:#dc2626">{% if item.discount > 0 %}-฿{{ item.discount|floatformat:2 }}{% else %}—{% endif %}</td>
+        <td style="font-weight:600;color:#3a7d5a">฿{{ item.total|floatformat:2 }}</td>
+      </tr>{% endfor %}</tbody></table>
+      <div style="padding:12px 14px;border-top:1px solid #f1f5f9;text-align:right">
+        <div style="font-size:13px;color:#64748b;margin-bottom:4px">ยอดก่อนส่วนลด: ฿{{ order.subtotal|floatformat:2 }}</div>
+        {% if order.discount > 0 %}<div style="font-size:13px;color:#dc2626;margin-bottom:4px">ส่วนลด: -฿{{ order.discount|floatformat:2 }}</div>{% endif %}
+        <div style="font-size:16px;font-weight:700">มูลค่ารวม: <span style="color:#c8873a">฿{{ order.total|floatformat:2 }}</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card-box mb-3"><div class="card-box-hdr"><span class="card-box-title">ข้อมูล</span></div>
+      <div style="padding:12px 14px;font-size:13px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="color:#64748b">เลขที่</span><span style="font-weight:600">{{ order.so_number }}</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="color:#64748b">วันที่</span><span>{{ order.date|date:"d/m/Y" }}</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="color:#64748b">ช่องทาง</span><span>{{ order.get_order_type_display }}</span></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="color:#64748b">ลูกค้า</span><span>{{ order.customer.name|default:'Walk-in' }}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#64748b">พนักงาน</span><span>{{ order.employee.name|default:'—' }}</span></div>
+      </div>
+    </div>
+    <div class="card-box"><div class="card-box-hdr"><span class="card-box-title">เปลี่ยนสถานะ</span></div>
+      <div style="padding:12px 14px"><form method="POST" action="{% url 'sale_status' order.pk %}">{% csrf_token %}
+        <select name="status" class="inp mb-2"><option value="draft" {% if order.status == 'draft' %}selected{% endif %}>แบบร่าง</option><option value="confirmed" {% if order.status == 'confirmed' %}selected{% endif %}>ยืนยัน</option><option value="completed" {% if order.status == 'completed' %}selected{% endif %}>เสร็จสิ้น</option><option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>ยกเลิก</option></select>
+        <button type="submit" class="btn-p" style="width:100%">บันทึก</button>
+      </form></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
